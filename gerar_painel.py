@@ -184,7 +184,7 @@ def buscar_jogos_api(token: str) -> List[dict]:
     headers = {"X-Auth-Token": token}
     agora_utc = datetime.now(timezone.utc)
     date_from = agora_utc.strftime("%Y-%m-%d")
-    date_to = (agora_utc + timedelta(days=7)).strftime("%Y-%m-%d")
+    date_to = (agora_utc + timedelta(days=2)).strftime("%Y-%m-%d")
 
     jogos_coletados = []
     for comp in COMPETICOES_API:
@@ -410,8 +410,8 @@ def main():
         )
 
     agora_brt = datetime.now(timezone.utc) - timedelta(hours=3)
-    fim_brt = agora_brt + timedelta(days=7)
-    periodo_str = f"Big 5 + UEFA • Semana {agora_brt.strftime('%d/%m')} a {fim_brt.strftime('%d/%m')}"
+    fim_brt = agora_brt + timedelta(days=2)
+    periodo_str = f"Big 5 + UEFA • Janela {agora_brt.strftime('%d/%m')} a {fim_brt.strftime('%d/%m')}"
 
     with open("template.html", "r", encoding="utf-8") as f:
         html_tpl = f.read()
