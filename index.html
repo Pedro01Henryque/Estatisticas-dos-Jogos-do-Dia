@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arena dos Dados — Jogos do Dia & Matriz de Scouting</title>
+  <style>
+    :root {
+      --bg-body: #090d16;
+      --bg-panel: #111827;
+      --bg-card: #161f32;
+      --bg-row-alt: #0f1624;
+      --border: #1f2937;
+      --border-light: #2d3a4f;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent-gold: #f59e0b;
+      --accent-gold-bg: rgba(245, 158, 11, 0.14);
+      --green: #10b981;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --blue: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      padding: 16px;
+      line-height: 1.4;
+    }
+
+    .container {
+      max-width: 1220px;
+      margin: 0 auto;
+    }
+
+    /* TOP BAR - JOGOS DO DIA */
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: 0.8px;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+    }
+
+    .match-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .match-tab {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      color: var(--text-muted);
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.15s ease;
+    }
+
+    .match-tab:hover {
+      border-color: var(--accent-gold);
+      color: var(--text-main);
+    }
+
+    .match-tab.active {
+      background: var(--accent-gold);
+      color: #090d16;
+      border-color: var(--accent-gold);
+      font-weight: 800;
+    }
+
+    .actions-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      color: var(--text-main);
+      padding: 7px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: 0.15s;
+    }
+
+    .btn:hover {
+      border-color: var(--accent-gold);
+    }
+
+    .btn.active-filter {
+      background: var(--accent-gold-bg);
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    .btn-primary {
+      background: #1d4ed8;
+      border-color: #2563eb;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #2563eb;
+    }
+
+    /* INFOGRAPHIC CANVAS */
+    .dashboard {
+      background: linear-gradient(180deg, #0e1422 0%, #0b101b 100%);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
+    }
+
+    /* CABEÇALHO DO CONFRONTO */
+    .match-header {
+      display: grid;
+      grid-template-columns: 1.2fr 1.1fr 1.2fr;
+      gap: 16px;
+      padding: 20px 24px;
+      background: radial-gradient(circle at top center, #1b263b 0%, #0d1320 75%);
+      border-bottom: 1px solid var(--border-light);
+      align-items: center;
+    }
+
+    .teams-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      gap: 16px;
+    }
+
+    .team-card {
+      text-align: center;
+    }
+
+    .crest {
+      width: 62px;
+      height: 62px;
+      border-radius: 14px;
+      margin: 0 auto 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.25rem;
+      letter-spacing: 1px;
+      border: 2px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .team-name {
+      font-weight: 800;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .form-badges {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .badge-form {
+      width: 19px;
+      height: 19px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .form-V { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #059669; }
+    .form-E { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid #ca8a04; }
+    .form-D { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #dc2626; }
+
+    .stadium-box {
+      text-align: center;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      padding: 0 14px;
+    }
+
+    .league-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+    }
+
+    .match-datetime {
+      font-size: 0.82rem;
+      color: var(--text-main);
+      margin: 3px 0 8px;
+    }
+
+    .stadium-banner {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 0.8rem;
+    }
+
+    .stadium-name {
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    .stadium-city {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    /* ÁRBITRO */
+    .referee-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.65);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+    }
+
+    .ref-info h4 {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .ref-name {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 2px 0 6px;
+    }
+
+    .ref-stat {
+      font-size: 0.75rem;
+      color: #cbd5e1;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-icon {
+      display: inline-block;
+      width: 9px;
+      height: 13px;
+      border-radius: 2px;
+    }
+
+    .card-yellow { background: #facc15; }
+    .card-red { background: #ef4444; }
+    .card-pen { background: #38bdf8; }
+
+    .ref-avatar {
+      width: 58px;
+      height: 68px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #bef264 0%, #65a30d 100%);
+      color: #090d16;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .ref-avatar span {
+      font-size: 0.6rem;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    /* DIVISOR CENTRAL */
+    .section-divider {
+      background: #141c2e;
+      text-align: center;
+      padding: 7px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+    }
+
+    /* ESTATÍSTICAS DAS EQUIPES (CASA VS FORA) */
+    .team-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .team-stats-col {
+      padding: 14px 18px;
+    }
+
+    .team-stats-col:first-child {
+      border-right: 1px solid var(--border-light);
+    }
+
+    .col-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.78rem;
+    }
+
+    .col-header-left strong {
+      display: block;
+      color: var(--text-main);
+      font-size: 0.82rem;
+    }
+
+    .col-header-left span {
+      color: var(--text-muted);
+      font-size: 0.72rem;
+    }
+
+    .col-header-mid {
+      text-align: center;
+      font-weight: 800;
+      font-size: 0.82rem;
+    }
+
+    .col-header-mid small {
+      display: block;
+      font-weight: 400;
+      color: var(--text-muted);
+      font-size: 0.68rem;
+    }
+
+    .col-header-right {
+      text-align: right;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 0.74rem;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1.2fr 0.45fr;
+      align-items: center;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 0.81rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-row:nth-child(even) {
+      background: var(--bg-row-alt);
+    }
+
+    .stat-row.highlight {
+      background: var(--accent-gold-bg);
+    }
+
+    .stat-row.highlight .stat-name,
+    .stat-row.highlight .stat-seq,
+    .stat-row.highlight .stat-avg {
+      color: var(--accent-gold);
+      font-weight: 700;
+    }
+
+    .stat-row.dimmed {
+      opacity: 0.28;
+    }
+
+    .stat-name {
+      color: #d1d5db;
+    }
+
+    .stat-seq {
+      text-align: center;
+      letter-spacing: 1px;
+      color: #e5e7eb;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.8rem;
+    }
+
+    .stat-avg {
+      text-align: right;
+      font-weight: 700;
+      color: #f9fafb;
+    }
+
+    /* MATRIZ DE SCOUTING DE JOGADORES */
+    .scouting-section {
+      padding: 18px 20px 24px;
+      background: #0b101b;
+    }
+
+    .scouting-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .scouting-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-main);
+    }
+
+    .scouting-title span {
+      color: var(--accent-gold);
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    .matrix-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .matrix-wrapper.single-col {
+      grid-template-columns: 1fr;
+    }
+
+    .team-matrix-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .matrix-team-banner {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 800;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .table-scroll {
+      overflow-x: auto;
+    }
+
+    table.scouting-matrix {
+      width: 100%;
+      border-collapse: collapse;
+      font-variant-numeric: tabular-nums;
+    }
+
+    table.scouting-matrix th {
+      background: #141c2e;
+      color: var(--text-muted);
+      font-size: 0.71rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 9px 6px;
+      border-bottom: 1px solid var(--border-light);
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+
+    table.scouting-matrix th:first-child {
+      text-align: left;
+      padding-left: 12px;
+      cursor: default;
+    }
+
+    table.scouting-matrix th:hover:not(:first-child) {
+      color: var(--accent-gold);
+    }
+
+    table.scouting-matrix th.sorted-col {
+      color: var(--accent-gold);
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    table.scouting-matrix td {
+      padding: 8px 6px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    table.scouting-matrix tr:nth-child(even) td {
+      background: rgba(15, 22, 36, 0.65);
+    }
+
+    table.scouting-matrix tr:hover td {
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .player-cell {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-align: left;
+      padding-left: 6px;
+      min-width: 145px;
+    }
+
+    .player-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.74rem;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .player-meta strong {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-main);
+      line-height: 1.15;
+    }
+
+    .player-meta span {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    .metric-cell {
+      border-radius: 6px;
+      padding: 3px 4px;
+    }
+
+    .metric-cell.top-leader {
+      background: var(--accent-gold-bg);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .metric-avg {
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: #f9fafb;
+      line-height: 1.1;
+    }
+
+    .metric-cell.top-leader .metric-avg {
+      color: var(--accent-gold);
+    }
+
+    .metric-seq {
+      font-family: 'Consolas', monospace;
+      font-size: 0.67rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      letter-spacing: 0.3px;
+    }
+
+    /* MODAL ADICIONAR JOGO */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      max-width: 520px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    .modal-box h3 {
+      margin-bottom: 12px;
+      color: var(--accent-gold);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-group.full {
+      grid-column: span 2;
+    }
+
+    .form-group label {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .form-group input {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      color: var(--text-main);
+      padding: 8px 10px;
+      border-radius: 7px;
+      font-size: 0.84rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    @media (max-width: 980px) {
+      .match-header {
+        grid-template-columns: 1fr;
+      }
+      .stadium-box {
+        border-left: none;
+        border-right: none;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        padding: 12px 0;
+      }
+      .team-stats-grid,
+      .matrix-wrapper {
+        grid-template-columns: 1fr;
+      }
+      .team-stats-col:first-child {
+        border-right: none;
+        border-bottom: 1px solid var(--border-light);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- BARRA SUPERIOR DE JOGOS DO DIA -->
+    <div class="top-bar">
+      <div class="brand">📊 Arena dos Dados</div>
+      <div class="match-tabs" id="matchTabs"></div>
+      <div class="actions-group">
+        <button class="btn" id="btnHighlightOnly" onclick="toggleHighlightFilter()">⭐ Só Destaques</button>
+        <button class="btn" onclick="copyTelegramSummary()">📋 Copiar Resumo</button>
+        <button class="btn btn-primary" onclick="openModal()">+ Adicionar Jogo</button>
+      </div>
+    </div>
+
+    <!-- PAINEL PRINCIPAL -->
+    <div class="dashboard" id="dashboard"></div>
+  </div>
+
+  <!-- MODAL PARA NOVO JOGO -->
+  <div class="modal-backdrop" id="addMatchModal">
+    <div class="modal-box">
+      <h3>Cadastrar Novo Jogo do Dia</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Mandante (Casa)</label>
+          <input type="text" id="inHome" placeholder="Ex: Corinthians" />
+        </div>
+        <div class="form-group">
+          <label>Visitante (Fora)</label>
+          <input type="text" id="inAway" placeholder="Ex: São Paulo" />
+        </div>
+        <div class="form-group">
+          <label>Competição & Rodada</label>
+          <input type="text" id="inLeague" placeholder="Ex: Brasileirão Série A - Rodada 29" />
+        </div>
+        <div class="form-group">
+          <label>Data e Horário</label>
+          <input type="text" id="inDate" placeholder="Ex: 23/11/2026 - 21:30" />
+        </div>
+        <div class="form-group full">
+          <label>Estádio e Cidade</label>
+          <input type="text" id="inStadium" placeholder="Ex: Neo Química Arena — São Paulo, Brasil" />
+        </div>
+        <div class="form-group">
+          <label>Árbitro</label>
+          <input type="text" id="inRef" placeholder="Ex: Raphael Claus" />
+        </div>
+        <div class="form-group">
+          <label>Média Amarelos / Vermelhos</label>
+          <input type="text" id="inRefCards" placeholder="Ex: 4.80 | 0.25" />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveNewMatch()">Salvar Confronto</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const METRIC_LABELS = [
+      "Gols Marcados",
+      "Gols Sofridos",
+      "Finalizações",
+      "Finalizações 1ºT",
+      "Finalizações Sofridas",
+      "Chutes ao Gol",
+      "Chutes ao Gol Sofridos",
+      "Escanteios",
+      "Escanteios 1ºT",
+      "Escanteios Cedidos",
+      "Escanteios Cedidos 1ºT",
+      "Faltas Cometidas",
+      "Desarmes",
+      "Cartões Amarelos",
+      "Impedimentos",
+      "Tiros de Meta",
+      "Passes",
+      "Defesas do Goleiro"
+    ];
+
+    const PLAYER_COLS = [
+      { key: "fin", label: "Fin." },
+      { key: "sot", label: "Chutes Gol" },
+      { key: "tac", label: "Desarmes" },
+      { key: "fc", label: "Faltas Com." },
+      { key: "fs", label: "Faltas Sof." }
+    ];
+
+    const MATCHES_DATA = [
+      {
+        id: "fla-rbb",
+        tabLabel: "Flamengo x Bragantino",
+        league: "BRASILEIRÃO SÉRIE A",
+        roundDate: "Rodada 28 - 20/09/2026 - 18:30",
+        stadium: "ESTÁDIO MARACANÃ",
+        city: "Rio de Janeiro, Brasil",
+        referee: {
+          name: "RODRIGO PEREIRA",
+          matches: "34 Partidas (25/26)",
+          yellow: "153 Cartões (Média: 4.50)",
+          red: "10 Cartões (Média: 0.29)",
+          pen: "8 Pênaltis (Média: 0.24)"
+        },
+        home: {
+          name: "FLAMENGO",
+          abbr: "FLA",
+          bg: "linear-gradient(135deg, #dc2626 50%, #111827 50%)",
+          color: "#ffffff",
+          form: ["E", "V", "V", "V", "V"],
+          stats: [
+            [1, 2, 2, 3, 2],
+            [1, 1, 0, 0, 1],
+            [10, 32, 14, 18, 24],
+            [5, 18, 12, 12, 15],
+            [8, 3, 8, 14, 14],
+            [3, 10, 4, 6, 9],
+            [4, 1, 2, 4, 3],
+            [5, 20, 9, 5, 3],
+            [2, 11, 5, 4, 1],
+            [3, 0, 7, 3, 6],
+            [1, 0, 2, 1, 2],
+            [13, 14, 7, 8, 9],
+            [19, 15, 19, 23, 17],
+            [5, 4, 0, 0, 1],
+            [0, 1, 0, 3, 1],
+            [6, 6, 8, 9, 11],
+            [481, 669, 632, 657, 463],
+            [3, 0, 2, 4, 2]
+          ],
+          players: [
+            { name: "Pedro", pos: "ATA", fin: [2,1,1,4,1], sot: [1,1,0,3,1], tac: [0,1,0,0,1], fc: [1,2,1,0,1], fs: [2,1,2,3,1] },
+            { name: "Bruno Henrique", pos: "ATA", fin: [2,4,0,1,1], sot: [1,2,0,1,0], tac: [1,0,2,1,1], fc: [2,1,1,2,1], fs: [1,1,2,1,0] },
+            { name: "De Arrascaeta", pos: "MEI", fin: [1,3,2,2,1], sot: [1,0,1,1,2], tac: [1,2,1,0,2], fc: [0,1,1,0,1], fs: [3,2,1,2,2] },
+            { name: "Gonzalo Plata", pos: "ATA", fin: [1,2,1,1,2], sot: [0,1,1,0,1], tac: [2,1,2,1,2], fc: [1,1,2,1,0], fs: [2,3,1,1,2] },
+            { name: "Jorginho", pos: "VOL", fin: [0,1,1,0,1], sot: [0,0,1,0,0], tac: [3,2,3,4,2], fc: [2,1,2,2,1], fs: [1,2,1,1,2] },
+            { name: "Gerson", pos: "MEI", fin: [1,2,2,1,1], sot: [0,1,1,1,0], tac: [2,3,1,2,3], fc: [1,2,1,1,2], fs: [2,2,3,1,2] },
+            { name: "Ayrton Lucas", pos: "LAT", fin: [1,2,0,1,1], sot: [0,1,0,0,1], tac: [2,2,3,2,1], fc: [1,1,0,2,1], fs: [1,1,2,0,1] }
+          ]
+        },
+        away: {
+          name: "BRAGANTINO",
+          abbr: "RBB",
+          bg: "linear-gradient(135deg, #f8fafc 50%, #dc2626 50%)",
+          color: "#0f172a",
+          form: ["E", "D", "D", "V", "E"],
+          stats: [
+            [1, 1, 2, 1, 0],
+            [1, 2, 2, 1, 0],
+            [14, 8, 18, 16, 15],
+            [7, 4, 11, 8, 5],
+            [21, 17, 11, 20, 20],
+            [8, 3, 9, 5, 5],
+            [6, 8, 4, 7, 6],
+            [4, 7, 10, 5, 2],
+            [4, 3, 6, 0, 1],
+            [5, 9, 5, 8, 5],
+            [1, 6, 1, 6, 2],
+            [9, 14, 11, 8, 8],
+            [20, 23, 7, 16, 19],
+            [2, 4, 2, 1, 3],
+            [1, 2, 1, 0, 0],
+            [12, 8, 10, 11, 11],
+            [279, 468, 416, 460, 396],
+            [5, 6, 2, 6, 6]
+          ],
+          players: [
+            { name: "Lucas Barbosa", pos: "ATA", fin: [3,2,4,1,1], sot: [2,1,2,0,1], tac: [1,2,0,1,1], fc: [2,1,2,1,1], fs: [2,0,1,3,3] },
+            { name: "Fernando", pos: "ATA", fin: [3,2,0,2,1], sot: [1,1,0,1,1], tac: [0,1,1,0,1], fc: [1,2,1,1,0], fs: [1,2,1,1,2] },
+            { name: "Isidro Pitta", pos: "ATA", fin: [2,1,3,2,2], sot: [1,0,3,1,2], tac: [0,1,0,1,0], fc: [2,2,1,1,2], fs: [2,1,2,1,1] },
+            { name: "Agustín Sant'Anna", pos: "LAT", fin: [1,0,1,1,0], sot: [0,0,1,0,0], tac: [1,9,2,2,4], fc: [1,2,1,1,2], fs: [1,1,0,2,1] },
+            { name: "Alix Vinicius", pos: "ZAG", fin: [1,0,1,0,1], sot: [0,0,0,0,1], tac: [2,3,1,2,3], fc: [1,2,2,2,0], fs: [0,1,1,0,1] },
+            { name: "Jhon Jhon", pos: "MEI", fin: [2,1,2,2,1], sot: [1,1,1,1,0], tac: [2,1,1,2,2], fc: [1,2,1,0,1], fs: [2,2,3,2,1] },
+            { name: "Matheus Fernandes", pos: "VOL", fin: [1,1,0,1,1], sot: [0,0,0,1,0], tac: [3,4,2,3,3], fc: [2,3,2,1,2], fs: [1,0,1,1,1] }
+          ]
+        }
+      },
+      {
+        id: "pal-bot",
+        tabLabel: "Palmeiras x Botafogo",
+        league: "BRASILEIRÃO SÉRIE A",
+        roundDate: "Rodada 28 - 20/09/2026 - 21:30",
+        stadium: "ALLIANZ PARQUE",
+        city: "São Paulo, Brasil",
+        referee: {
+          name: "WILTON PEREIRA SAMPAIO",
+          matches: "31 Partidas (25/26)",
+          yellow: "162 Cartões (Média: 5.22)",
+          red: "9 Cartões (Média: 0.29)",
+          pen: "11 Pênaltis (Média: 0.35)"
+        },
+        home: {
+          name: "PALMEIRAS",
+          abbr: "PAL",
+          bg: "#15803d",
+          color: "#ffffff",
+          form: ["V", "V", "E", "V", "V"],
+          stats: [
+            [2, 3, 1, 2, 2],
+            [0, 1, 1, 0, 1],
+            [18, 22, 15, 19, 21],
+            [9, 11, 7, 10, 9],
+            [9, 8, 11, 7, 10],
+            [7, 8, 5, 6, 8],
+            [3, 2, 4, 2, 3],
+            [8, 11, 7, 9, 8],
+            [4, 6, 3, 5, 4],
+            [3, 2, 5, 3, 4],
+            [1, 1, 2, 1, 2],
+            [11, 12, 14, 10, 13],
+            [18, 20, 16, 19, 17],
+            [2, 3, 2, 1, 2],
+            [1, 2, 1, 1, 2],
+            [7, 6, 8, 6, 7],
+            [510, 545, 490, 532, 518],
+            [3, 1, 3, 2, 2]
+          ],
+          players: [
+            { name: "Estêvão", pos: "ATA", fin: [4,3,2,4,3], sot: [2,2,1,2,2], tac: [1,2,1,1,2], fc: [1,0,1,1,1], fs: [4,3,5,3,4] },
+            { name: "Flaco López", pos: "ATA", fin: [3,4,2,3,3], sot: [2,2,1,1,2], tac: [0,1,0,1,0], fc: [2,1,2,1,2], fs: [1,2,1,2,1] },
+            { name: "Raphael Veiga", pos: "MEI", fin: [2,3,2,2,3], sot: [1,2,1,1,1], tac: [1,1,2,1,1], fc: [1,1,0,1,1], fs: [2,2,1,2,2] },
+            { name: "Aníbal Moreno", pos: "VOL", fin: [1,1,0,1,1], sot: [0,1,0,0,0], tac: [4,5,3,4,4], fc: [2,3,2,2,3], fs: [1,1,2,1,1] },
+            { name: "Richard Ríos", pos: "VOL", fin: [2,2,1,2,1], sot: [1,1,0,1,1], tac: [3,2,3,3,2], fc: [2,2,3,1,2], fs: [2,3,2,2,3] },
+            { name: "Piquerez", pos: "LAT", fin: [1,2,1,1,2], sot: [0,1,0,1,1], tac: [2,3,2,2,3], fc: [1,1,2,1,1], fs: [1,1,1,2,1] }
+          ]
+        },
+        away: {
+          name: "BOTAFOGO",
+          abbr: "BOT",
+          bg: "linear-gradient(135deg, #111827 50%, #f8fafc 50%)",
+          color: "#f59e0b",
+          form: ["V", "E", "V", "D", "V"],
+          stats: [
+            [2, 1, 2, 0, 3],
+            [1, 1, 0, 2, 1],
+            [14, 12, 16, 11, 17],
+            [6, 5, 8, 4, 8],
+            [13, 15, 11, 16, 12],
+            [6, 4, 7, 3, 7],
+            [4, 5, 3, 6, 4],
+            [6, 5, 7, 4, 6],
+            [3, 2, 4, 2, 3],
+            [5, 6, 4, 7, 5],
+            [2, 3, 2, 3, 2],
+            [13, 15, 12, 14, 11],
+            [19, 17, 21, 16, 18],
+            [3, 4, 2, 3, 2],
+            [2, 1, 2, 1, 1],
+            [9, 10, 8, 11, 9],
+            [440, 425, 475, 412, 468],
+            [3, 4, 3, 4, 3]
+          ],
+          players: [
+            { name: "Igor Jesus", pos: "ATA", fin: [3,2,4,2,3], sot: [2,1,2,1,2], tac: [1,1,0,1,1], fc: [2,2,1,2,1], fs: [3,2,3,2,3] },
+            { name: "Luiz Henrique", pos: "ATA", fin: [3,3,2,2,4], sot: [1,2,1,1,2], tac: [1,0,2,1,1], fc: [1,2,1,1,1], fs: [3,4,2,3,3] },
+            { name: "Savarino", pos: "MEI", fin: [2,2,3,1,2], sot: [1,1,2,0,1], tac: [1,2,1,1,2], fc: [0,1,1,1,0], fs: [2,1,2,2,2] },
+            { name: "Marlon Freitas", pos: "VOL", fin: [1,1,1,0,1], sot: [0,0,1,0,0], tac: [3,3,4,3,3], fc: [2,2,1,2,2], fs: [1,2,1,1,2] },
+            { name: "Gregore", pos: "VOL", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [4,5,4,3,4], fc: [3,3,2,3,2], fs: [1,1,2,1,1] },
+            { name: "Alex Telles", pos: "LAT", fin: [1,1,2,1,1], sot: [0,1,1,0,1], tac: [2,2,3,2,2], fc: [1,2,1,1,1], fs: [1,1,1,2,1] }
+          ]
+        }
+      },
+      {
+        id: "rma-fcb",
+        tabLabel: "Real Madrid x Barcelona",
+        league: "LA LIGA",
+        roundDate: "Rodada 14 - 23/11/2026 - 17:00",
+        stadium: "SANTIAGO BERNABÉU",
+        city: "Madri, Espanha",
+        referee: {
+          name: "GIL MANZANO",
+          matches: "28 Partidas (26/27)",
+          yellow: "145 Cartões (Média: 5.18)",
+          red: "8 Cartões (Média: 0.28)",
+          pen: "9 Pênaltis (Média: 0.32)"
+        },
+        home: {
+          name: "REAL MADRID",
+          abbr: "RMA",
+          bg: "#f8fafc",
+          color: "#1e3a8a",
+          form: ["V", "V", "V", "E", "V"],
+          stats: [
+            [3, 2, 4, 1, 3],
+            [1, 0, 1, 1, 1],
+            [20, 18, 24, 15, 22],
+            [9, 8, 12, 7, 10],
+            [10, 9, 11, 12, 9],
+            [8, 7, 10, 5, 9],
+            [4, 3, 4, 5, 3],
+            [7, 8, 9, 6, 8],
+            [4, 4, 5, 3, 4],
+            [4, 3, 4, 5, 3],
+            [2, 1, 2, 2, 1],
+            [10, 11, 9, 12, 10],
+            [16, 18, 15, 17, 16],
+            [2, 2, 1, 3, 2],
+            [3, 2, 4, 2, 3],
+            [6, 5, 7, 8, 6],
+            [610, 640, 595, 622, 635],
+            [3, 3, 3, 4, 2]
+          ],
+          players: [
+            { name: "Vinícius Júnior", pos: "ATA", fin: [4,5,4,3,5], sot: [2,3,2,1,3], tac: [1,0,1,1,1], fc: [2,1,2,2,1], fs: [4,5,4,3,4] },
+            { name: "Kylian Mbappé", pos: "ATA", fin: [5,4,6,3,5], sot: [3,2,4,2,3], tac: [0,1,0,0,1], fc: [1,1,0,1,1], fs: [2,3,2,2,3] },
+            { name: "Jude Bellingham", pos: "MEI", fin: [3,2,3,2,3], sot: [2,1,2,1,1], tac: [3,2,3,3,2], fc: [2,2,1,2,2], fs: [3,2,3,2,3] },
+            { name: "Fede Valverde", pos: "MEI", fin: [2,3,2,2,2], sot: [1,1,1,1,1], tac: [3,3,2,4,3], fc: [1,1,1,2,1], fs: [1,2,1,1,1] },
+            { name: "Tchouaméni", pos: "VOL", fin: [1,1,0,1,1], sot: [0,0,0,0,1], tac: [4,3,4,3,4], fc: [2,3,2,2,2], fs: [1,1,2,1,1] }
+          ]
+        },
+        away: {
+          name: "BARCELONA",
+          abbr: "FCB",
+          bg: "linear-gradient(135deg, #1d4ed8 50%, #b91c1c 50%)",
+          color: "#facc15",
+          form: ["V", "V", "V", "V", "D"],
+          stats: [
+            [3, 4, 2, 3, 1],
+            [1, 1, 0, 1, 2],
+            [19, 22, 17, 20, 15],
+            [10, 11, 8, 9, 7],
+            [9, 10, 8, 11, 13],
+            [8, 9, 7, 8, 5],
+            [3, 4, 3, 4, 5],
+            [8, 9, 7, 8, 6],
+            [4, 5, 3, 4, 3],
+            [3, 4, 3, 4, 5],
+            [1, 2, 1, 2, 2],
+            [11, 10, 12, 11, 13],
+            [18, 19, 17, 18, 16],
+            [2, 1, 2, 2, 3],
+            [1, 2, 1, 1, 2],
+            [6, 7, 5, 6, 8],
+            [655, 680, 630, 660, 615],
+            [2, 3, 3, 3, 3]
+          ],
+          players: [
+            { name: "Lamine Yamal", pos: "ATA", fin: [4,4,3,4,3], sot: [2,2,2,2,1], tac: [1,2,1,1,1], fc: [1,0,1,1,1], fs: [3,4,3,3,4] },
+            { name: "Raphinha", pos: "ATA", fin: [3,5,3,4,2], sot: [2,3,1,2,1], tac: [2,2,1,2,2], fc: [1,2,1,1,2], fs: [2,2,3,2,2] },
+            { name: "Lewandowski", pos: "ATA", fin: [4,4,3,3,3], sot: [2,3,2,2,1], tac: [0,0,1,0,0], fc: [1,1,2,1,1], fs: [2,1,2,2,1] },
+            { name: "Pedri", pos: "MEI", fin: [1,2,1,1,1], sot: [1,1,0,1,0], tac: [2,3,2,2,3], fc: [1,1,0,1,1], fs: [3,2,3,3,2] },
+            { name: "Marc Casadó", pos: "VOL", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [4,4,5,3,4], fc: [2,2,3,2,3], fs: [1,2,1,1,2] }
+          ]
+        }
+      }
+    ];
+
+    let activeMatchIndex = 0;
+    let highlightOnly = false;
+    let teamFilter = "all"; // "all" | "home" | "away"
+    let sortMetricKey = null; // null | "fin" | "sot" | "tac" | "fc" | "fs"
+
+    function calcAvg(arr) {
+      if (!arr || !arr.length) return 0;
+      const sum = arr.reduce((a, b) => a + b, 0);
+      return +(sum / arr.length).toFixed(1);
+    }
+
+    function renderTabs() {
+      const container = document.getElementById("matchTabs");
+      container.innerHTML = MATCHES_DATA.map(
+        (m, idx) => `
+          <button class="match-tab ${idx === activeMatchIndex ? "active" : ""}" onclick="selectMatch(${idx})">
+            ${m.tabLabel}
+          </button>
+        `
+      ).join("");
+    }
+
+    function selectMatch(idx) {
+      activeMatchIndex = idx;
+      sortMetricKey = null;
+      renderTabs();
+      renderDashboard();
+    }
+
+    function toggleHighlightFilter() {
+      highlightOnly = !highlightOnly;
+      const btn = document.getElementById("btnHighlightOnly");
+      btn.classList.toggle("active-filter", highlightOnly);
+      renderDashboard();
+    }
+
+    function setTeamFilter(val) {
+      teamFilter = val;
+      renderDashboard();
+    }
+
+    function toggleSortMetric(key) {
+      sortMetricKey = sortMetricKey === key ? null : key;
+      renderDashboard();
+    }
+
+    function buildTeamStatsColumn(teamObj, opponentObj, venueLabel) {
+      const rowsHtml = METRIC_LABELS.map((label, i) => {
+        const seq = teamObj.stats[i];
+        const oppSeq = opponentObj.stats[i];
+        const avg = calcAvg(seq);
+        const oppAvg = calcAvg(oppSeq);
+
+        const isBetter = avg > oppAvg;
+        const rowClass = isBetter
+          ? "stat-row highlight"
+          : highlightOnly
+          ? "stat-row dimmed"
+          : "stat-row";
+
+        return `
+          <div class="${rowClass}">
+            <div class="stat-name">${label}</div>
+            <div class="stat-seq">${seq.join(" - ")}</div>
+            <div class="stat-avg">${avg.toFixed(1)}</div>
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <div class="team-stats-col">
+          <div class="col-header">
+            <div class="col-header-left">
+              <strong>ESTATÍSTICAS DA EQUIPE</strong>
+              <span>Últimos 5 Jogos <b>${venueLabel}</b></span>
+            </div>
+            <div class="col-header-mid">
+              ${teamObj.name}
+              <small>Sequência em 90'</small>
+            </div>
+            <div class="col-header-right">
+              MÉDIA<br/>em 90'
+            </div>
+          </div>
+          ${rowsHtml}
+        </div>
+      `;
+    }
+
+    function buildPlayerMatrixCard(teamObj) {
+      let playersList = [...teamObj.players];
+
+      // Calcula líderes de cada coluna para destacar
+      const maxByCol = {};
+      PLAYER_COLS.forEach((col) => {
+        maxByCol[col.key] = Math.max(...playersList.map((p) => calcAvg(p[col.key])));
+      });
+
+      if (sortMetricKey) {
+        playersList.sort((a, b) => calcAvg(b[sortMetricKey]) - calcAvg(a[sortMetricKey]));
+      }
+
+      const headersHtml = PLAYER_COLS.map((col) => {
+        const isSorted = sortMetricKey === col.key;
+        return `
+          <th class="${isSorted ? "sorted-col" : ""}" onclick="toggleSortMetric('${col.key}')" title="Clique para ordenar por ${col.label}">
+            ${col.label} ${isSorted ? "▼" : ""}
+          </th>
+        `;
+      }).join("");
+
+      const rowsHtml = playersList
+        .map((p) => {
+          const initials = p.name
+            .split(" ")
+            .map((n) => n[0])
+            .slice(0, 2)
+            .join("");
+
+          const cellsHtml = PLAYER_COLS.map((col) => {
+            const arr = p[col.key];
+            const avg = calcAvg(arr);
+            const isLeader = avg > 0 && avg === maxByCol[col.key];
+            return `
+              <td>
+                <div class="metric-cell ${isLeader ? "top-leader" : ""}">
+                  <div class="metric-avg">${avg.toFixed(1)}</div>
+                  <div class="metric-seq">${arr.join("-")}</div>
+                </div>
+              </td>
+            `;
+          }).join("");
+
+          return `
+            <tr>
+              <td>
+                <div class="player-cell">
+                  <div class="player-avatar" style="background:${teamObj.bg}; color:${teamObj.color};">${initials}</div>
+                  <div class="player-meta">
+                    <strong>${p.name}</strong>
+                    <span>${p.pos} • 5 jogos</span>
+                  </div>
+                </div>
+              </td>
+              ${cellsHtml}
+            </tr>
+          `;
+        })
+        .join("");
+
+      return `
+        <div class="team-matrix-card">
+          <div class="matrix-team-banner">
+            <span>${teamObj.name} — Elenco Principal</span>
+            <span style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">Média / Seq. 90'</span>
+          </div>
+          <div class="table-scroll">
+            <table class="scouting-matrix">
+              <thead>
+                <tr>
+                  <th>Jogador</th>
+                  ${headersHtml}
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDashboard() {
+      const m = MATCHES_DATA[activeMatchIndex];
+      const refInitials = m.referee.name
+        .split(" ")
+        .map((w) => w[0])
+        .slice(0, 2)
+        .join("");
+
+      const renderFormBadges = (arr) =>
+        arr.map((res) => `<span class="badge-form form-${res}">${res}</span>`).join("");
+
+      let matricesHtml = "";
+      if (teamFilter === "all") {
+        matricesHtml = `
+          <div class="matrix-wrapper">
+            ${buildPlayerMatrixCard(m.home)}
+            ${buildPlayerMatrixCard(m.away)}
+          </div>
+        `;
+      } else if (teamFilter === "home") {
+        matricesHtml = `
+          <div class="matrix-wrapper single-col">
+            ${buildPlayerMatrixCard(m.home)}
+          </div>
+        `;
+      } else {
+        matricesHtml = `
+          <div class="matrix-wrapper single-col">
+            ${buildPlayerMatrixCard(m.away)}
+          </div>
+        `;
+      }
+
+      document.getElementById("dashboard").innerHTML = `
+        <!-- CABEÇALHO -->
+        <div class="match-header">
+          <div class="teams-box">
+            <div class="team-card">
+              <div class="crest" style="background:${m.home.bg}; color:${m.home.color};">${m.home.abbr}</div>
+              <div class="team-name">${m.home.name}</div>
+              <div class="form-label">Últimos 5 Jogos</div>
+              <div class="form-badges">${renderFormBadges(m.home.form)}</div>
+            </div>
+            <div style="font-weight:900; color:var(--text-muted); font-size:1.1rem;">VS</div>
+            <div class="team-card">
+              <div class="crest" style="background:${m.away.bg}; color:${m.away.color};">${m.away.abbr}</div>
+              <div class="team-name">${m.away.name}</div>
+              <div class="form-label">Últimos 5 Jogos</div>
+              <div class="form-badges">${renderFormBadges(m.away.form)}</div>
+            </div>
+          </div>
+
+          <div class="stadium-box">
+            <div class="league-title">${m.league}</div>
+            <div class="match-datetime">${m.roundDate}</div>
+            <div class="stadium-banner">
+              <div class="stadium-name">🏟️ ${m.stadium}</div>
+              <div class="stadium-city">${m.city}</div>
+            </div>
+          </div>
+
+          <div class="referee-box">
+            <div class="ref-info">
+              <h4>Árbitro</h4>
+              <div class="ref-name">${m.referee.name}</div>
+              <div class="ref-stat">📋 ${m.referee.matches}</div>
+              <div class="ref-stat"><span class="card-icon card-yellow"></span> ${m.referee.yellow}</div>
+              <div class="ref-stat"><span class="card-icon card-red"></span> ${m.referee.red}</div>
+              <div class="ref-stat"><span class="card-icon card-pen"></span> ${m.referee.pen}</div>
+            </div>
+            <div class="ref-avatar">
+              ${refInitials}
+              <span>Árbitro</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-divider">Arena dos Dados — Comparativo 90'</div>
+
+        <!-- ESTATÍSTICAS DAS EQUIPES -->
+        <div class="team-stats-grid">
+          ${buildTeamStatsColumn(m.home, m.away, "EM CASA")}
+          ${buildTeamStatsColumn(m.away, m.home, "FORA")}
+        </div>
+
+        <!-- MATRIZ DE SCOUTING DE JOGADORES -->
+        <div class="scouting-section">
+          <div class="scouting-toolbar">
+            <div class="scouting-title">
+              Scouting de Jogadores (Matriz)
+              <span>Clique nas métricas para ordenar</span>
+            </div>
+            <div class="actions-group">
+              <button class="btn ${teamFilter === "all" ? "active-filter" : ""}" onclick="setTeamFilter('all')">Todos</button>
+              <button class="btn ${teamFilter === "home" ? "active-filter" : ""}" onclick="setTeamFilter('home')">Só ${m.home.name}</button>
+              <button class="btn ${teamFilter === "away" ? "active-filter" : ""}" onclick="setTeamFilter('away')">Só ${m.away.name}</button>
+            </div>
+          </div>
+          ${matricesHtml}
+        </div>
+      `;
+    }
+
+    function copyTelegramSummary() {
+      const m = MATCHES_DATA[activeMatchIndex];
+      const topHomeFin = [...m.home.players].sort((a, b) => calcAvg(b.fin) - calcAvg(a.fin))[0];
+      const topAwayFin = [...m.away.players].sort((a, b) => calcAvg(b.fin) - calcAvg(a.fin))[0];
+
+      const text = [
+        `📊 ARENA DOS DADOS — ${m.home.name} x ${m.away.name}`,
+        `🏆 ${m.league} | ${m.roundDate}`,
+        `🟨 Árbitro: ${m.referee.name} (${m.referee.yellow})`,
+        ``,
+        `📈 MÉDIAS EM 90' (CASA vs FORA):`,
+        `• Finalizações: ${calcAvg(m.home.stats[2])} vs ${calcAvg(m.away.stats[2])}`,
+        `• Chutes ao Gol: ${calcAvg(m.home.stats[5])} vs ${calcAvg(m.away.stats[5])}`,
+        `• Escanteios: ${calcAvg(m.home.stats[7])} vs ${calcAvg(m.away.stats[7])}`,
+        `• Faltas Cometidas: ${calcAvg(m.home.stats[11])} vs ${calcAvg(m.away.stats[11])}`,
+        ``,
+        `🎯 DESTAQUES INDIVIDUAIS (FINALIZAÇÕES):`,
+        `• ${topHomeFin.name} (${m.home.abbr}): Média ${calcAvg(topHomeFin.fin)} (${topHomeFin.fin.join("-")})`,
+        `• ${topAwayFin.name} (${m.away.abbr}): Média ${calcAvg(topAwayFin.fin)} (${topAwayFin.fin.join("-")})`
+      ].join("\n");
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Resumo copiado para a área de transferência! Pronto para colar no Telegram.");
+      });
+    }
+
+    function openModal() {
+      document.getElementById("addMatchModal").classList.add("open");
+    }
+
+    function closeModal() {
+      document.getElementById("addMatchModal").classList.remove("open");
+    }
+
+    function saveNewMatch() {
+      const homeName = document.getElementById("inHome").value.trim() || "MANDANTE";
+      const awayName = document.getElementById("inAway").value.trim() || "VISITANTE";
+      const league = document.getElementById("inLeague").value.trim() || "CAMPEONATO";
+      const roundDate = document.getElementById("inDate").value.trim() || "Hoje - 20:00";
+      const stadiumFull = document.getElementById("inStadium").value.trim() || "Estádio Principal — Brasil";
+      const refName = document.getElementById("inRef").value.trim() || "Árbitro a Definir";
+      const refCards = document.getElementById("inRefCards").value.trim() || "4.50 | 0.20";
+
+      const [stadium, city] = stadiumFull.split("—").map((s) => s.trim());
+      const [yAvg, rAvg] = refCards.split("|").map((s) => s.trim());
+
+      const genStats = () =>
+        METRIC_LABELS.map((_, idx) => {
+          if (idx === 16) return [420, 460, 440, 480, 450];
+          const base = idx < 2 ? 1 : idx < 5 ? 12 : 5;
+          return Array.from({ length: 5 }, () => Math.max(0, base + Math.floor(Math.random() * 5) - 2));
+        });
+
+      const genPlayers = (prefix) =>
+        ["Atacante 1", "Atacante 2", "Meia Armador", "Volante", "Lateral"].map((role, i) => ({
+          name: `${prefix} ${role}`,
+          pos: i < 2 ? "ATA" : i === 2 ? "MEI" : i === 3 ? "VOL" : "LAT",
+          fin: [2, 1, 3, 1, 2],
+          sot: [1, 0, 2, 1, 1],
+          tac: [1, 2, 1, 4, 3],
+          fc: [1, 2, 1, 2, 1],
+          fs: [2, 1, 3, 1, 2]
+        }));
+
+      MATCHES_DATA.push({
+        id: `custom-${Date.now()}`,
+        tabLabel: `${homeName} x ${awayName}`,
+        league: league.toUpperCase(),
+        roundDate,
+        stadium: (stadium || "ESTÁDIO").toUpperCase(),
+        city: city || "Brasil",
+        referee: {
+          name: refName.toUpperCase(),
+          matches: "20 Partidas (Temporada)",
+          yellow: `Média: ${yAvg || "4.50"}`,
+          red: `Média: ${rAvg || "0.20"}`,
+          pen: "Média: 0.25"
+        },
+        home: {
+          name: homeName.toUpperCase(),
+          abbr: homeName.slice(0, 3).toUpperCase(),
+          bg: "#2563eb",
+          color: "#ffffff",
+          form: ["V", "E", "V", "V", "E"],
+          stats: genStats(),
+          players: genPlayers(homeName.slice(0, 3).toUpperCase())
+        },
+        away: {
+          name: awayName.toUpperCase(),
+          abbr: awayName.slice(0, 3).toUpperCase(),
+          bg: "#dc2626",
+          color: "#ffffff",
+          form: ["E", "V", "D", "V", "E"],
+          stats: genStats(),
+          players: genPlayers(awayName.slice(0, 3).toUpperCase())
+        }
+      });
+
+      closeModal();
+      selectMatch(MATCHES_DATA.length - 1);
+    }
+
+    renderTabs();
+    renderDashboard();
+  </script>
+</body>
+</html>
