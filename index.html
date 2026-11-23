@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Arena dos Dados — Central Estatística & Scouting Completo</title>
+  <title>Arena dos Dados — Jogos da Semana (Big 5 + UEFA)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -38,8 +38,8 @@
     body {
       background-color: var(--bg-base);
       background-image:
-        radial-gradient(circle at 15% 0%, rgba(16, 185, 129, 0.09), transparent 38%),
-        radial-gradient(circle at 85% 5%, rgba(6, 182, 212, 0.08), transparent 38%);
+        radial-gradient(circle at 12% 0%, rgba(16, 185, 129, 0.09), transparent 38%),
+        radial-gradient(circle at 88% 5%, rgba(6, 182, 212, 0.08), transparent 38%);
       color: var(--text-primary);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       padding: 18px;
@@ -48,24 +48,30 @@
     }
 
     .container {
-      max-width: 1340px;
+      max-width: 1360px;
       margin: 0 auto;
     }
 
-    /* TOP NAVIGATION BAR */
+    /* TOP NAVIGATION & LEAGUE FILTERS */
     .top-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: rgba(12, 18, 32, 0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .top-row-main {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
-      background: rgba(12, 18, 32, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      padding: 12px 18px;
-      margin-bottom: 18px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      gap: 12px;
     }
 
     .brand {
@@ -73,12 +79,23 @@
       align-items: center;
       gap: 10px;
       font-weight: 900;
-      font-size: 1.05rem;
+      font-size: 1.08rem;
       letter-spacing: 0.6px;
       text-transform: uppercase;
       background: linear-gradient(90deg, #34d399, #22d3ee);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+    }
+
+    .brand-sub {
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 9px;
+      border-radius: 999px;
+      -webkit-text-fill-color: var(--text-secondary);
     }
 
     .brand-dot {
@@ -90,26 +107,63 @@
       flex-shrink: 0;
     }
 
+    .league-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .league-btn {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.76rem;
+      font-weight: 700;
+      transition: all 0.16s ease;
+    }
+
+    .league-btn:hover {
+      border-color: var(--cyan);
+      color: var(--text-primary);
+    }
+
+    .league-btn.active {
+      background: var(--cyan-glow);
+      border-color: var(--cyan);
+      color: #22d3ee;
+    }
+
     .match-tabs {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
     }
 
     .match-tab {
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
       color: var(--text-secondary);
-      padding: 8px 15px;
+      padding: 8px 14px;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 0.84rem;
+      font-size: 0.81rem;
       font-weight: 600;
-      transition: all 0.2s ease;
+      transition: all 0.18s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
     }
 
     .match-tab:hover {
-      border-color: var(--cyan);
+      border-color: var(--emerald);
       color: var(--text-primary);
       transform: translateY(-1px);
     }
@@ -120,6 +174,12 @@
       border-color: #34d399;
       font-weight: 800;
       box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
+    }
+
+    .match-tab small {
+      font-size: 0.67rem;
+      opacity: 0.82;
+      font-weight: 600;
     }
 
     .actions-group {
@@ -136,7 +196,7 @@
       padding: 8px 13px;
       border-radius: 10px;
       cursor: pointer;
-      font-size: 0.81rem;
+      font-size: 0.8rem;
       font-weight: 600;
       transition: all 0.18s ease;
       display: inline-flex;
@@ -210,7 +270,7 @@
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 1.35rem;
+      font-size: 1.32rem;
       letter-spacing: 1px;
       border: 2px solid rgba(255, 255, 255, 0.22);
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
@@ -218,13 +278,13 @@
 
     .team-name {
       font-weight: 800;
-      font-size: 0.98rem;
+      font-size: 0.96rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
     .form-label {
-      font-size: 0.7rem;
+      font-size: 0.69rem;
       color: var(--text-muted);
       margin-top: 3px;
       text-transform: uppercase;
@@ -242,7 +302,7 @@
       width: 21px;
       height: 21px;
       border-radius: 6px;
-      font-size: 0.72rem;
+      font-size: 0.71rem;
       font-weight: 800;
       display: inline-flex;
       align-items: center;
@@ -276,7 +336,7 @@
       border: 1px solid rgba(6, 182, 212, 0.4);
       color: #22d3ee;
       font-weight: 800;
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       padding: 4px 12px;
       border-radius: 999px;
       text-transform: uppercase;
@@ -284,7 +344,7 @@
     }
 
     .match-datetime {
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       font-weight: 600;
       color: var(--text-primary);
       margin: 8px 0 10px;
@@ -330,14 +390,14 @@
     }
 
     .ref-name {
-      font-size: 0.95rem;
+      font-size: 0.94rem;
       font-weight: 800;
       color: var(--text-primary);
       margin: 2px 0 7px;
     }
 
     .ref-stat {
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       color: var(--text-secondary);
       margin-bottom: 3px;
       display: flex;
@@ -560,7 +620,7 @@
       padding: 8px 12px;
       border-radius: 10px;
       font-size: 0.81rem;
-      min-width: 210px;
+      min-width: 215px;
       outline: none;
       transition: border-color 0.2s;
     }
@@ -629,7 +689,7 @@
 
     .table-scroll {
       overflow-x: auto;
-      max-height: 680px;
+      max-height: 700px;
       overflow-y: auto;
     }
 
@@ -705,7 +765,7 @@
       gap: 9px;
       text-align: left;
       padding-left: 8px;
-      min-width: 162px;
+      min-width: 165px;
     }
 
     .player-avatar {
@@ -835,7 +895,7 @@
       font-weight: 600;
     }
 
-    .form-group input {
+    .form-group input, .form-group select {
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
       color: var(--text-primary);
@@ -843,10 +903,6 @@
       border-radius: 8px;
       font-size: 0.84rem;
       outline: none;
-    }
-
-    .form-group input:focus {
-      border-color: var(--cyan);
     }
 
     .modal-actions {
@@ -879,18 +935,26 @@
 </head>
 <body>
   <div class="container">
-    <!-- BARRA SUPERIOR DE NAVEGAÇÃO -->
+    <!-- BARRA SUPERIOR: FILTRO DE LIGAS + JOGOS DA SEMANA -->
     <div class="top-bar">
-      <div class="brand">
-        <span class="brand-dot"></span>
-        Arena dos Dados
+      <div class="top-row-main">
+        <div class="brand">
+          <span class="brand-dot"></span>
+          Arena dos Dados
+          <span class="brand-sub">Big 5 + UEFA • Semana 23/11 a 29/11</span>
+        </div>
+        <div class="actions-group">
+          <button class="btn" id="btnHighlightOnly" onclick="toggleHighlightFilter()">⚡ Só Vantagens</button>
+          <button class="btn" onclick="copyTelegramSummary()">📋 Copiar Resumo</button>
+          <button class="btn btn-primary" onclick="openModal()">+ Adicionar Jogo</button>
+        </div>
       </div>
+
+      <!-- FILTRO DAS 8 COMPETIÇÕES -->
+      <div class="league-pills" id="leaguePills"></div>
+
+      <!-- ABAS DOS JOGOS DA SEMANA -->
       <div class="match-tabs" id="matchTabs"></div>
-      <div class="actions-group">
-        <button class="btn" id="btnHighlightOnly" onclick="toggleHighlightFilter()">⚡ Só Vantagens</button>
-        <button class="btn" onclick="copyTelegramSummary()">📋 Copiar Resumo</button>
-        <button class="btn btn-primary" onclick="openModal()">+ Adicionar Jogo</button>
-      </div>
     </div>
 
     <!-- PAINEL PRINCIPAL -->
@@ -900,35 +964,44 @@
   <!-- MODAL PARA NOVO JOGO -->
   <div class="modal-backdrop" id="addMatchModal">
     <div class="modal-box">
-      <h3>Cadastrar Novo Jogo do Dia</h3>
+      <h3>Cadastrar Novo Jogo da Semana</h3>
       <div class="form-grid">
         <div class="form-group">
           <label>Mandante (Casa)</label>
-          <input type="text" id="inHome" placeholder="Ex: Corinthians" />
+          <input type="text" id="inHome" placeholder="Ex: Arsenal" />
         </div>
         <div class="form-group">
           <label>Visitante (Fora)</label>
-          <input type="text" id="inAway" placeholder="Ex: São Paulo" />
+          <input type="text" id="inAway" placeholder="Ex: Chelsea" />
         </div>
         <div class="form-group">
-          <label>Competição & Rodada</label>
-          <input type="text" id="inLeague" placeholder="Ex: Brasileirão Série A - Rodada 29" />
+          <label>Competição</label>
+          <select id="inLeague">
+            <option value="Premier League">Premier League</option>
+            <option value="La Liga">La Liga</option>
+            <option value="Serie A">Serie A</option>
+            <option value="Bundesliga">Bundesliga</option>
+            <option value="Ligue 1">Ligue 1</option>
+            <option value="UEFA Champions League">UEFA Champions League</option>
+            <option value="UEFA Europa League">UEFA Europa League</option>
+            <option value="UEFA Conference League">UEFA Conference League</option>
+          </select>
         </div>
         <div class="form-group">
-          <label>Data e Horário</label>
-          <input type="text" id="inDate" placeholder="Ex: 23/11/2026 - 21:30" />
+          <label>Dia e Horário (BRT)</label>
+          <input type="text" id="inDate" placeholder="Ex: Sáb 28/11 • 14:30" />
         </div>
         <div class="form-group full">
           <label>Estádio e Cidade</label>
-          <input type="text" id="inStadium" placeholder="Ex: Neo Química Arena — São Paulo, Brasil" />
+          <input type="text" id="inStadium" placeholder="Ex: Emirates Stadium — Londres, Inglaterra" />
         </div>
         <div class="form-group">
           <label>Árbitro</label>
-          <input type="text" id="inRef" placeholder="Ex: Raphael Claus" />
+          <input type="text" id="inRef" placeholder="Ex: Michael Oliver" />
         </div>
         <div class="form-group">
           <label>Média Amarelos / Vermelhos</label>
-          <input type="text" id="inRefCards" placeholder="Ex: 4.80 | 0.25" />
+          <input type="text" id="inRefCards" placeholder="Ex: 4.35 | 0.18" />
         </div>
       </div>
       <div class="modal-actions">
@@ -968,315 +1041,708 @@
       { key: "fs", label: "Faltas Sof." }
     ];
 
+    const LEAGUES_FILTER = [
+      { key: "ALL", label: "🌍 Todas as 8 Competições" },
+      { key: "Premier League", label: "🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League" },
+      { key: "La Liga", label: "🇪🇸 La Liga" },
+      { key: "Serie A", label: "🇮🇹 Serie A" },
+      { key: "Bundesliga", label: "🇩🇪 Bundesliga" },
+      { key: "Ligue 1", label: "🇫🇷 Ligue 1" },
+      { key: "UEFA Champions League", label: "⭐ Champions League" },
+      { key: "UEFA Europa League", label: "🟠 Europa League" },
+      { key: "UEFA Conference League", label: "🟢 Conference League" }
+    ];
+
+    function buildFullSquad(list) {
+      return list.map(([name, pos, role, fin, sot, tac, fc, fs]) => ({
+        name, pos, role, fin, sot, tac, fc, fs
+      }));
+    }
+
     const MATCHES_DATA = [
+      // 1. PREMIER LEAGUE (SEGUNDA 23/11)
       {
-        id: "fla-rbb",
-        tabLabel: "Flamengo x Bragantino",
-        league: "BRASILEIRÃO SÉRIE A",
-        roundDate: "Rodada 28 • 20/09/2026 • 18:30",
-        stadium: "ESTÁDIO MARACANÃ",
-        city: "Rio de Janeiro, Brasil",
+        id: "bre-eve",
+        leagueKey: "Premier League",
+        tabLabel: "Brentford x Everton",
+        subLabel: "Seg 23/11 • 17:00",
+        league: "PREMIER LEAGUE • RODADA 11",
+        roundDate: "Segunda, 23/11/2026 • 17:00 (BRT)",
+        stadium: "GTECH COMMUNITY STADIUM",
+        city: "Londres, Inglaterra",
         referee: {
-          name: "RODRIGO PEREIRA",
-          matches: "34 Partidas (25/26)",
-          yellow: "153 Cartões (Média: 4.50)",
-          red: "10 Cartões (Média: 0.29)",
-          pen: "8 Pênaltis (Média: 0.24)"
+          name: "CRAIG PAWSON",
+          matches: "26 Partidas (26/27)",
+          yellow: "114 Cartões (Média: 4.38)",
+          red: "6 Cartões (Média: 0.23)",
+          pen: "7 Pênaltis (Média: 0.27)"
         },
         home: {
-          name: "FLAMENGO",
-          abbr: "FLA",
-          bg: "linear-gradient(135deg, #dc2626 50%, #090d16 50%)",
-          color: "#ffffff",
-          form: ["E", "V", "V", "V", "V"],
+          name: "BRENTFORD",
+          abbr: "BRE",
+          bg: "linear-gradient(135deg, #dc2626 50%, #f8fafc 50%)",
+          color: "#090d16",
+          form: ["V", "E", "V", "D", "V"],
           stats: [
-            [1, 2, 2, 3, 2],
-            [1, 1, 0, 0, 1],
-            [10, 32, 14, 18, 24],
-            [5, 18, 12, 12, 15],
-            [8, 3, 8, 14, 14],
-            [3, 10, 4, 6, 9],
-            [4, 1, 2, 4, 3],
-            [5, 20, 9, 5, 3],
-            [2, 11, 5, 4, 1],
-            [3, 0, 7, 3, 6],
-            [1, 0, 2, 1, 2],
-            [13, 14, 7, 8, 9],
-            [19, 15, 19, 23, 17],
-            [5, 4, 0, 0, 1],
-            [0, 1, 0, 3, 1],
-            [6, 6, 8, 9, 11],
-            [481, 669, 632, 657, 463],
-            [3, 0, 2, 4, 2]
+            [2, 1, 3, 1, 2], [1, 1, 1, 2, 0], [15, 13, 18, 11, 16], [7, 6, 9, 5, 8],
+            [12, 14, 10, 15, 11], [6, 5, 8, 4, 7], [4, 5, 3, 6, 3], [6, 5, 8, 4, 7],
+            [3, 2, 4, 2, 3], [5, 6, 4, 7, 5], [2, 3, 2, 3, 2], [11, 12, 10, 13, 11],
+            [18, 17, 20, 16, 19], [2, 2, 1, 3, 2], [2, 1, 2, 1, 2], [8, 9, 7, 10, 8],
+            [435, 412, 460, 398, 448], [3, 4, 2, 4, 3]
           ],
-          players: [
-            { name: "Rossi", pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [1,0,1,0,1] },
-            { name: "Wesley", pos: "LAT", role: "Titular", fin: [1,2,1,1,2], sot: [0,1,0,1,1], tac: [3,2,4,3,2], fc: [2,1,1,2,1], fs: [1,2,1,2,1] },
-            { name: "Léo Ortiz", pos: "ZAG", role: "Titular", fin: [1,1,0,1,1], sot: [0,1,0,0,1], tac: [2,3,2,3,2], fc: [1,1,0,1,1], fs: [1,0,1,1,0] },
-            { name: "Léo Pereira", pos: "ZAG", role: "Titular", fin: [1,2,1,0,1], sot: [1,1,0,0,0], tac: [2,2,3,2,2], fc: [2,1,1,1,2], fs: [0,1,1,0,1] },
-            { name: "Ayrton Lucas", pos: "LAT", role: "Titular", fin: [1,2,0,1,1], sot: [0,1,0,0,1], tac: [2,2,3,2,1], fc: [1,1,0,2,1], fs: [1,1,2,0,1] },
-            { name: "Erick Pulgar", pos: "VOL", role: "Titular", fin: [1,1,0,1,1], sot: [0,0,0,1,0], tac: [4,3,3,4,3], fc: [2,3,2,2,2], fs: [1,1,1,2,1] },
-            { name: "Jorginho", pos: "VOL", role: "Titular", fin: [0,1,1,0,1], sot: [0,0,1,0,0], tac: [3,2,3,4,2], fc: [2,1,2,2,1], fs: [1,2,1,1,2] },
-            { name: "Gerson", pos: "MEI", role: "Titular", fin: [1,2,2,1,1], sot: [0,1,1,1,0], tac: [2,3,1,2,3], fc: [1,2,1,1,2], fs: [2,2,3,1,2] },
-            { name: "De Arrascaeta", pos: "MEI", role: "Titular", fin: [1,3,2,2,1], sot: [1,0,1,1,2], tac: [1,2,1,0,2], fc: [0,1,1,0,1], fs: [3,2,1,2,2] },
-            { name: "Gonzalo Plata", pos: "ATA", role: "Titular", fin: [1,2,1,1,2], sot: [0,1,1,0,1], tac: [2,1,2,1,2], fc: [1,1,2,1,0], fs: [2,3,1,1,2] },
-            { name: "Pedro", pos: "ATA", role: "Titular", fin: [2,1,1,4,1], sot: [1,1,0,3,1], tac: [0,1,0,0,1], fc: [1,2,1,0,1], fs: [2,1,2,3,1] },
-            { name: "Bruno Henrique", pos: "ATA", role: "Reserva", fin: [2,4,0,1,1], sot: [1,2,0,1,0], tac: [1,0,2,1,1], fc: [2,1,1,2,1], fs: [1,1,2,1,0] },
-            { name: "Luiz Araújo", pos: "ATA", role: "Reserva", fin: [2,3,1,2,2], sot: [1,1,0,1,1], tac: [1,1,1,0,1], fc: [1,1,0,1,1], fs: [1,2,1,1,2] },
-            { name: "De La Cruz", pos: "MEI", role: "Reserva", fin: [1,2,1,1,1], sot: [0,1,1,0,0], tac: [2,2,1,2,2], fc: [1,2,1,1,1], fs: [2,1,2,1,2] },
-            { name: "Alex Sandro", pos: "LAT", role: "Reserva", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [2,2,2,1,2], fc: [1,1,1,0,1], fs: [1,1,0,1,1] }
-          ]
+          players: buildFullSquad([
+            ["Mark Flekken", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [1,0,0,1,0]],
+            ["Sepp van den Berg", "LAT", "Titular", [1,0,1,1,0], [0,0,1,0,0], [3,2,3,2,3], [1,2,1,1,1], [1,1,2,1,1]],
+            ["Nathan Collins", "ZAG", "Titular", [1,1,1,0,1], [0,1,0,0,1], [2,3,2,3,2], [1,1,2,1,1], [1,0,1,0,1]],
+            ["Ethan Pinnock", "ZAG", "Titular", [1,1,0,1,1], [1,0,0,0,1], [2,2,3,2,2], [2,1,1,2,1], [0,1,1,0,1]],
+            ["Keane Lewis-Potter", "LAT", "Titular", [3,2,4,2,3], [2,1,2,1,2], [2,3,2,2,3], [1,1,1,2,1], [2,2,1,2,2]],
+            ["Christian Nørgaard", "VOL", "Titular", [1,1,0,1,1], [0,0,1,0,0], [4,3,4,3,4], [2,3,2,2,2], [1,1,2,1,1]],
+            ["Vitaly Janelt", "VOL", "Titular", [1,2,1,1,1], [0,1,0,1,0], [3,2,3,3,2], [2,1,2,1,2], [2,1,2,1,2]],
+            ["Mikkel Damsgaard", "MEI", "Titular", [2,2,3,1,2], [1,1,2,0,1], [2,2,1,2,2], [1,1,0,1,1], [3,2,3,2,3]],
+            ["Bryan Mbeumo", "ATA", "Titular", [4,3,5,3,4], [2,2,3,1,2], [1,1,0,1,1], [1,0,1,1,0], [3,3,4,2,3]],
+            ["Kevin Schade", "ATA", "Titular", [3,2,3,2,3], [1,1,2,1,1], [1,0,1,1,1], [1,1,1,0,1], [2,2,2,1,2]],
+            ["Yoane Wissa", "ATA", "Titular", [3,4,3,2,3], [2,2,2,1,2], [0,1,0,0,1], [2,1,2,1,2], [2,1,2,2,1]],
+            ["Fábio Carvalho", "MEI", "Reserva", [2,1,2,1,2], [1,0,1,1,0], [1,1,0,1,1], [1,1,0,1,1], [1,2,1,1,1]],
+            ["Mathias Jensen", "VOL", "Reserva", [1,1,0,1,1], [0,0,1,0,0], [2,2,2,1,2], [1,1,1,0,1], [1,1,0,1,1]]
+          ])
         },
         away: {
-          name: "BRAGANTINO",
-          abbr: "RBB",
-          bg: "linear-gradient(135deg, #f8fafc 50%, #dc2626 50%)",
-          color: "#090d16",
-          form: ["E", "D", "D", "V", "E"],
+          name: "EVERTON",
+          abbr: "EVE",
+          bg: "#1d4ed8",
+          color: "#ffffff",
+          form: ["E", "D", "V", "E", "D"],
           stats: [
-            [1, 1, 2, 1, 0],
-            [1, 2, 2, 1, 0],
-            [14, 8, 18, 16, 15],
-            [7, 4, 11, 8, 5],
-            [21, 17, 11, 20, 20],
-            [8, 3, 9, 5, 5],
-            [6, 8, 4, 7, 6],
-            [4, 7, 10, 5, 2],
-            [4, 3, 6, 0, 1],
-            [5, 9, 5, 8, 5],
-            [1, 6, 1, 6, 2],
-            [9, 14, 11, 8, 8],
-            [20, 23, 7, 16, 19],
-            [2, 4, 2, 1, 3],
-            [1, 2, 1, 0, 0],
-            [12, 8, 10, 11, 11],
-            [279, 468, 416, 460, 396],
-            [5, 6, 2, 6, 6]
+            [1, 0, 2, 1, 0], [1, 2, 1, 1, 2], [11, 9, 14, 12, 10], [5, 4, 7, 5, 4],
+            [15, 17, 13, 14, 18], [4, 3, 5, 4, 3], [5, 6, 4, 5, 7], [4, 3, 6, 5, 4],
+            [2, 1, 3, 2, 2], [6, 7, 5, 6, 8], [3, 4, 2, 3, 4], [13, 14, 12, 13, 15],
+            [19, 21, 18, 20, 17], [3, 3, 2, 2, 4], [2, 2, 1, 2, 1], [10, 11, 9, 10, 12],
+            [365, 340, 390, 372, 330], [4, 5, 3, 4, 5]
           ],
-          players: [
-            { name: "Cleiton", pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [0,1,0,1,0] },
-            { name: "Agustín Sant'Anna", pos: "LAT", role: "Titular", fin: [1,0,1,1,0], sot: [0,0,1,0,0], tac: [1,9,2,2,4], fc: [1,2,1,1,2], fs: [1,1,0,2,1] },
-            { name: "Pedro Henrique", pos: "ZAG", role: "Titular", fin: [1,0,1,1,0], sot: [0,0,0,1,0], tac: [2,3,1,2,3], fc: [1,2,2,1,1], fs: [1,0,1,0,1] },
-            { name: "Alix Vinicius", pos: "ZAG", role: "Titular", fin: [1,0,1,0,1], sot: [0,0,0,0,1], tac: [2,3,1,2,3], fc: [1,2,2,2,0], fs: [0,1,1,0,1] },
-            { name: "Juninho Capixaba", pos: "LAT", role: "Titular", fin: [2,1,2,1,2], sot: [1,0,1,0,1], tac: [3,2,2,3,2], fc: [1,2,1,1,2], fs: [2,2,1,2,1] },
-            { name: "Matheus Fernandes", pos: "VOL", role: "Titular", fin: [1,1,0,1,1], sot: [0,0,0,1,0], tac: [3,4,2,3,3], fc: [2,3,2,1,2], fs: [1,0,1,1,1] },
-            { name: "Lucas Evangelista", pos: "VOL", role: "Titular", fin: [2,1,2,1,1], sot: [1,0,1,1,0], tac: [2,3,1,2,2], fc: [1,1,2,1,1], fs: [2,1,2,2,1] },
-            { name: "Jhon Jhon", pos: "MEI", role: "Titular", fin: [2,1,2,2,1], sot: [1,1,1,1,0], tac: [2,1,1,2,2], fc: [1,2,1,0,1], fs: [2,2,3,2,1] },
-            { name: "Lucas Barbosa", pos: "ATA", role: "Titular", fin: [3,2,4,1,1], sot: [2,1,2,0,1], tac: [1,2,0,1,1], fc: [2,1,2,1,1], fs: [2,0,1,3,3] },
-            { name: "Fernando", pos: "ATA", role: "Titular", fin: [3,2,0,2,1], sot: [1,1,0,1,1], tac: [0,1,1,0,1], fc: [1,2,1,1,0], fs: [1,2,1,1,2] },
-            { name: "Isidro Pitta", pos: "ATA", role: "Titular", fin: [2,1,3,2,2], sot: [1,0,3,1,2], tac: [0,1,0,1,0], fc: [2,2,1,1,2], fs: [2,1,2,1,1] },
-            { name: "Eduardo Sasha", pos: "ATA", role: "Reserva", fin: [2,1,2,1,1], sot: [1,0,1,1,0], tac: [1,0,1,0,1], fc: [1,1,0,1,1], fs: [1,1,2,1,1] },
-            { name: "Vinicinho", pos: "ATA", role: "Reserva", fin: [1,2,1,2,1], sot: [1,1,0,1,0], tac: [1,1,0,1,1], fc: [1,1,1,0,1], fs: [2,1,1,2,1] },
-            { name: "Eric Ramires", pos: "MEI", role: "Reserva", fin: [1,0,1,1,1], sot: [0,0,1,0,0], tac: [2,2,1,2,1], fc: [1,1,1,1,0], fs: [1,1,1,0,1] },
-            { name: "Hurtado", pos: "LAT", role: "Reserva", fin: [0,1,0,0,1], sot: [0,0,0,0,0], tac: [2,1,1,2,2], fc: [1,1,0,1,1], fs: [1,0,1,1,0] }
-          ]
+          players: buildFullSquad([
+            ["Jordan Pickford", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [1,0,1,0,0]],
+            ["Ashley Young", "LAT", "Titular", [1,0,1,0,1], [0,0,0,0,1], [3,2,3,2,2], [2,2,1,2,2], [1,1,2,1,1]],
+            ["James Tarkowski", "ZAG", "Titular", [1,1,1,0,1], [0,1,0,0,0], [2,3,2,3,2], [2,2,3,2,2], [1,0,1,1,0]],
+            ["Jarrad Branthwaite", "ZAG", "Titular", [1,0,1,1,0], [0,0,1,0,0], [3,3,2,3,3], [1,2,1,1,2], [0,1,0,1,1]],
+            ["Vitalii Mykolenko", "LAT", "Titular", [1,1,0,1,1], [0,0,0,1,0], [3,2,3,3,2], [2,2,1,2,2], [1,1,1,2,1]],
+            ["Idrissa Gueye", "VOL", "Titular", [1,0,1,1,0], [0,0,0,0,0], [4,5,3,4,4], [2,3,2,3,2], [1,1,2,1,1]],
+            ["Abdoulaye Doucouré", "VOL", "Titular", [2,1,2,1,1], [1,0,1,0,1], [2,3,2,2,2], [2,2,1,2,2], [2,1,2,1,2]],
+            ["Dwight McNeil", "MEI", "Titular", [2,2,3,2,2], [1,1,1,1,1], [2,1,2,2,1], [1,1,1,0,1], [2,3,2,2,2]],
+            ["Iliman Ndiaye", "ATA", "Titular", [3,2,3,2,2], [1,1,2,1,1], [1,2,1,1,2], [1,1,2,1,1], [3,3,4,3,3]],
+            ["Jack Harrison", "ATA", "Titular", [2,1,2,2,1], [1,0,1,1,0], [2,1,2,1,2], [1,2,1,1,1], [1,2,1,1,2]],
+            ["Dominic Calvert-Lewin", "ATA", "Titular", [3,2,4,3,2], [1,1,2,1,1], [0,1,0,0,1], [2,2,1,2,2], [2,2,3,2,2]],
+            ["Beto", "ATA", "Reserva", [2,1,2,1,2], [1,0,1,1,0], [0,0,1,0,0], [1,2,1,1,1], [1,1,1,1,1]],
+            ["Orel Mangala", "VOL", "Reserva", [1,0,1,1,0], [0,0,0,0,0], [2,3,2,2,2], [1,1,2,1,1], [1,1,0,1,1]]
+          ])
         }
       },
+
+      // 2. LA LIGA (SEGUNDA 23/11)
       {
-        id: "pal-bot",
-        tabLabel: "Palmeiras x Botafogo",
-        league: "BRASILEIRÃO SÉRIE A",
-        roundDate: "Rodada 28 • 20/09/2026 • 21:30",
-        stadium: "ALLIANZ PARQUE",
-        city: "São Paulo, Brasil",
+        id: "lev-elc",
+        leagueKey: "La Liga",
+        tabLabel: "Levante x Elche",
+        subLabel: "Seg 23/11 • 17:00",
+        league: "LA LIGA • RODADA 13",
+        roundDate: "Segunda, 23/11/2026 • 17:00 (BRT)",
+        stadium: "ESTADIO CIUDAD DE VALENCIA",
+        city: "Valência, Espanha",
         referee: {
-          name: "WILTON PEREIRA SAMPAIO",
-          matches: "31 Partidas (25/26)",
-          yellow: "162 Cartões (Média: 5.22)",
-          red: "9 Cartões (Média: 0.29)",
-          pen: "11 Pênaltis (Média: 0.35)"
+          name: "ALEJANDRO HERNÁNDEZ",
+          matches: "24 Partidas (26/27)",
+          yellow: "128 Cartões (Média: 5.33)",
+          red: "7 Cartões (Média: 0.29)",
+          pen: "8 Pênaltis (Média: 0.33)"
         },
         home: {
-          name: "PALMEIRAS",
-          abbr: "PAL",
-          bg: "#15803d",
+          name: "LEVANTE",
+          abbr: "LEV",
+          bg: "linear-gradient(135deg, #1e3a8a 50%, #991b1b 50%)",
+          color: "#facc15",
+          form: ["V", "E", "V", "E", "D"],
+          stats: [
+            [2, 1, 2, 0, 1], [1, 1, 0, 0, 2], [15, 14, 17, 12, 13], [7, 6, 8, 5, 6],
+            [10, 11, 9, 12, 13], [6, 5, 7, 4, 5], [3, 4, 3, 4, 5], [6, 7, 8, 5, 6],
+            [3, 3, 4, 2, 3], [4, 5, 3, 5, 6], [2, 2, 1, 2, 3], [12, 13, 11, 14, 12],
+            [17, 18, 16, 19, 17], [2, 3, 2, 3, 2], [2, 1, 2, 2, 1], [7, 8, 6, 8, 9],
+            [470, 455, 492, 440, 460], [3, 3, 2, 3, 4]
+          ],
+          players: buildFullSquad([
+            ["Andrés Fernández", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [1,0,0,1,0]],
+            ["Andrés García", "LAT", "Titular", [2,1,2,1,2], [1,0,1,0,1], [3,2,3,3,2], [1,2,1,1,2], [2,1,2,1,2]],
+            ["Unai Elgezabal", "ZAG", "Titular", [1,1,0,1,0], [0,1,0,0,0], [2,3,2,2,3], [2,1,2,2,1], [1,0,1,1,0]],
+            ["Adrián de la Fuente", "ZAG", "Titular", [1,0,1,0,1], [0,0,1,0,0], [2,2,3,2,2], [1,2,1,1,2], [0,1,0,1,1]],
+            ["Diego Pampín", "LAT", "Titular", [1,1,2,1,1], [0,0,1,0,0], [2,3,2,2,3], [1,1,2,1,1], [1,2,1,1,2]],
+            ["Oriol Rey", "VOL", "Titular", [1,1,0,1,1], [0,0,0,1,0], [4,3,4,4,3], [2,2,1,2,2], [2,1,2,2,1]],
+            ["Pablo Martínez", "MEI", "Titular", [2,3,2,2,2], [1,1,1,1,1], [2,2,3,2,2], [1,2,1,1,1], [2,2,3,2,2]],
+            ["Carlos Álvarez", "MEI", "Titular", [3,2,3,2,3], [1,1,2,1,1], [1,2,1,1,2], [1,1,0,1,1], [3,4,3,3,4]],
+            ["José Luis Morales", "ATA", "Titular", [3,3,4,2,3], [2,1,2,1,2], [1,0,1,1,0], [1,1,1,0,1], [2,2,2,1,2]],
+            ["Roger Brugué", "ATA", "Titular", [2,2,3,2,2], [1,1,1,0,1], [1,1,2,1,1], [2,1,2,1,2], [2,1,2,2,1]],
+            ["Iván Romero", "ATA", "Titular", [3,2,3,2,2], [1,1,2,1,1], [0,1,0,1,0], [2,2,1,2,1], [2,2,3,2,2]],
+            ["Sergio Lozano", "MEI", "Reserva", [1,2,1,1,1], [0,1,0,0,1], [2,1,2,1,2], [1,1,1,0,1], [1,1,2,1,1]]
+          ])
+        },
+        away: {
+          name: "ELCHE",
+          abbr: "ELC",
+          bg: "linear-gradient(135deg, #f8fafc 55%, #15803d 45%)",
+          color: "#090d16",
+          form: ["E", "V", "D", "E", "V"],
+          stats: [
+            [1, 2, 0, 1, 2], [1, 1, 2, 1, 0], [11, 13, 9, 12, 14], [5, 6, 4, 5, 7],
+            [13, 12, 15, 13, 11], [4, 5, 3, 4, 6], [4, 4, 5, 4, 3], [5, 6, 4, 5, 6],
+            [2, 3, 2, 2, 3], [5, 5, 6, 5, 4], [2, 2, 3, 2, 2], [13, 12, 14, 13, 11],
+            [18, 17, 19, 18, 16], [3, 2, 3, 3, 2], [1, 2, 1, 1, 2], [9, 8, 10, 9, 8],
+            [495, 510, 465, 488, 520], [3, 3, 4, 3, 3]
+          ],
+          players: buildFullSquad([
+            ["Matías Dituro", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,1,0,0,1]],
+            ["Álvaro Núñez", "LAT", "Titular", [1,1,0,1,1], [0,0,0,1,0], [3,2,3,2,3], [1,1,2,1,1], [1,2,1,1,2]],
+            ["Aïssa Mandi", "ZAG", "Titular", [1,0,1,0,1], [0,0,0,0,1], [2,3,3,2,2], [2,2,2,1,2], [1,0,1,1,0]],
+            ["Pedro Bigas", "ZAG", "Titular", [1,1,0,1,0], [0,1,0,0,0], [2,2,3,2,2], [2,1,2,2,1], [0,1,0,1,0]],
+            ["José Salinas", "LAT", "Titular", [1,2,1,1,2], [0,1,0,0,1], [2,3,2,2,3], [1,2,1,1,1], [2,1,2,1,2]],
+            ["Aleix Febas", "VOL", "Titular", [1,1,1,2,1], [0,0,1,1,0], [3,3,4,3,3], [1,2,1,1,2], [3,3,2,3,3]],
+            ["Nico Castro", "MEI", "Titular", [2,2,1,2,2], [1,1,0,1,1], [2,2,3,2,2], [2,1,2,1,1], [2,2,2,3,2]],
+            ["Nico Fernández", "MEI", "Titular", [2,3,2,2,3], [1,2,1,1,1], [2,1,2,2,1], [1,1,1,2,1], [3,2,3,2,3]],
+            ["Josan", "ATA", "Titular", [2,2,1,2,2], [1,1,0,1,1], [1,2,1,1,1], [1,1,1,0,1], [2,2,1,2,2]],
+            ["Agustín Álvarez", "ATA", "Titular", [3,2,2,3,3], [1,1,1,1,2], [1,0,1,0,1], [2,2,1,2,1], [2,1,2,2,1]],
+            ["Mourad", "ATA", "Titular", [2,3,2,2,3], [1,1,1,1,1], [0,1,0,1,0], [2,1,2,2,1], [1,2,1,1,2]],
+            ["Sory Kaba", "ATA", "Reserva", [2,1,2,1,2], [1,0,1,0,1], [0,0,1,0,0], [1,2,1,1,1], [1,1,2,1,1]]
+          ])
+        }
+      },
+
+      // 3. SERIE A (SEGUNDA 23/11)
+      {
+        id: "mon-fio",
+        leagueKey: "Serie A",
+        tabLabel: "Monza x Fiorentina",
+        subLabel: "Seg 23/11 • 16:45",
+        league: "SERIE A • RODADA 12",
+        roundDate: "Segunda, 23/11/2026 • 16:45 (BRT)",
+        stadium: "STADIO BRIANTEO",
+        city: "Monza, Itália",
+        referee: {
+          name: "DANIELE DOVERI",
+          matches: "23 Partidas (26/27)",
+          yellow: "105 Cartões (Média: 4.56)",
+          red: "5 Cartões (Média: 0.22)",
+          pen: "7 Pênaltis (Média: 0.30)"
+        },
+        home: {
+          name: "MONZA",
+          abbr: "MON",
+          bg: "linear-gradient(135deg, #dc2626 65%, #f8fafc 35%)",
+          color: "#ffffff",
+          form: ["V", "E", "D", "V", "V"],
+          stats: [
+            [2, 1, 0, 2, 3], [1, 1, 2, 0, 0], [13, 12, 10, 14, 15], [6, 5, 4, 7, 7],
+            [13, 14, 16, 12, 11], [5, 4, 3, 6, 7], [4, 5, 6, 4, 3], [5, 5, 4, 6, 6],
+            [2, 2, 2, 3, 3], [6, 6, 7, 5, 5], [3, 3, 4, 2, 2], [13, 14, 15, 12, 12],
+            [18, 19, 17, 20, 19], [2, 3, 3, 2, 2], [1, 2, 1, 2, 1], [9, 9, 10, 8, 8],
+            [430, 415, 395, 445, 455], [4, 4, 5, 3, 3]
+          ],
+          players: buildFullSquad([
+            ["Stefano Turati", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [1,0,1,0,1]],
+            ["Armando Izzo", "ZAG", "Titular", [1,0,1,0,1], [0,0,0,0,1], [3,3,2,3,3], [2,2,3,2,2], [1,1,0,1,1]],
+            ["Pablo Marí", "ZAG", "Titular", [1,1,0,1,1], [0,1,0,0,0], [2,3,2,3,2], [1,2,1,1,2], [1,0,1,1,0]],
+            ["Andrea Carboni", "ZAG", "Titular", [1,0,1,1,0], [0,0,0,1,0], [2,2,3,2,2], [2,1,2,1,1], [0,1,1,0,1]],
+            ["Pedro Pereira", "LAT", "Titular", [1,1,0,1,1], [0,0,0,1,0], [3,2,3,3,2], [1,2,1,1,1], [1,1,2,1,1]],
+            ["Georgios Kyriakopoulos", "LAT", "Titular", [2,1,1,2,2], [1,0,0,1,1], [2,3,2,2,3], [1,1,2,1,1], [2,1,2,1,2]],
+            ["Warren Bondo", "VOL", "Titular", [1,1,0,1,1], [0,0,0,0,1], [4,4,3,4,4], [2,3,2,2,2], [2,1,2,2,1]],
+            ["Matteo Pessina", "MEI", "Titular", [2,1,1,2,2], [1,0,0,1,1], [3,2,3,3,2], [1,2,1,1,1], [3,3,2,3,3]],
+            ["Daniel Maldini", "MEI", "Titular", [3,2,2,3,3], [1,1,1,1,2], [1,1,0,1,1], [1,1,1,0,1], [2,3,2,2,3]],
+            ["Dany Mota", "ATA", "Titular", [2,2,1,2,3], [1,1,0,1,1], [1,1,1,0,1], [2,1,2,1,2], [2,2,3,2,2]],
+            ["Gustavo Varela", "ATA", "Titular", [3,2,2,3,4], [2,1,1,2,3], [0,1,0,0,1], [2,2,1,2,1], [2,1,2,2,2]],
+            ["Milan Đurić", "ATA", "Reserva", [2,2,1,2,1], [1,1,0,1,0], [0,0,1,0,0], [2,2,2,1,2], [2,2,1,2,1]]
+          ])
+        },
+        away: {
+          name: "FIORENTINA",
+          abbr: "FIO",
+          bg: "#6d28d9",
+          color: "#ffffff",
+          form: ["V", "V", "E", "V", "D"],
+          stats: [
+            [2, 3, 1, 2, 0], [1, 0, 1, 1, 3], [16, 18, 14, 17, 12], [8, 9, 6, 8, 5],
+            [11, 9, 12, 10, 15], [6, 8, 5, 7, 4], [4, 3, 4, 4, 6], [7, 8, 6, 7, 5],
+            [3, 4, 3, 4, 2], [4, 3, 5, 4, 6], [2, 1, 2, 2, 3], [11, 10, 12, 11, 13],
+            [17, 18, 16, 17, 15], [2, 2, 2, 1, 3], [2, 1, 2, 2, 1], [7, 6, 8, 7, 9],
+            [520, 545, 495, 530, 480], [3, 2, 3, 3, 4]
+          ],
+          players: buildFullSquad([
+            ["David de Gea", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,1,0,0,1]],
+            ["Dodô", "LAT", "Titular", [1,2,1,1,1], [0,1,0,0,0], [3,3,2,3,2], [1,1,2,1,1], [2,3,2,2,2]],
+            ["Pietro Comuzzo", "ZAG", "Titular", [1,0,1,0,0], [0,0,0,0,0], [2,3,2,3,2], [2,1,2,1,2], [1,0,1,0,1]],
+            ["Luca Ranieri", "ZAG", "Titular", [1,1,0,1,1], [0,1,0,0,0], [2,2,3,2,2], [2,2,1,2,2], [1,1,0,1,1]],
+            ["Robin Gosens", "LAT", "Titular", [2,2,1,2,1], [1,1,0,1,0], [2,3,2,2,2], [1,1,1,2,1], [1,1,2,1,1]],
+            ["Yacine Adli", "VOL", "Titular", [1,2,1,1,1], [0,1,0,1,0], [3,2,3,3,2], [1,2,1,1,1], [2,2,2,1,2]],
+            ["Danilo Cataldi", "VOL", "Titular", [1,1,1,2,1], [0,0,1,1,0], [3,3,4,3,3], [2,1,2,1,2], [1,2,1,1,1]],
+            ["Andrea Colpani", "MEI", "Titular", [3,3,2,3,2], [1,2,1,1,1], [1,2,1,1,1], [1,0,1,1,1], [2,2,3,2,2]],
+            ["Albert Guðmundsson", "MEI", "Titular", [3,4,2,3,2], [2,2,1,2,1], [1,1,2,1,1], [1,1,0,1,1], [3,3,2,3,2]],
+            ["Riccardo Sottil", "ATA", "Titular", [2,3,2,2,2], [1,1,1,1,0], [1,1,1,0,1], [1,1,1,1,1], [2,2,2,2,1]],
+            ["Moise Kean", "ATA", "Titular", [4,4,3,4,3], [2,2,1,2,1], [0,1,0,1,0], [2,2,1,2,2], [2,3,2,2,2]],
+            ["Lucas Beltrán", "ATA", "Reserva", [2,2,1,2,1], [1,1,0,1,0], [1,1,0,1,1], [1,1,1,0,1], [1,1,2,1,1]]
+          ])
+        }
+      },
+
+      // 4. UEFA CHAMPIONS LEAGUE (TERÇA 24/11)
+      {
+        id: "bay-psg",
+        leagueKey: "UEFA Champions League",
+        tabLabel: "Bayern x PSG",
+        subLabel: "Ter 24/11 • 17:00",
+        league: "UEFA CHAMPIONS LEAGUE • FASE DE LIGA",
+        roundDate: "Terça, 24/11/2026 • 17:00 (BRT)",
+        stadium: "ALLIANZ ARENA",
+        city: "Munique, Alemanha",
+        referee: {
+          name: "ISTVÁN KOVÁCS",
+          matches: "19 Partidas (UEFA 26/27)",
+          yellow: "96 Cartões (Média: 5.05)",
+          red: "5 Cartões (Média: 0.26)",
+          pen: "6 Pênaltis (Média: 0.31)"
+        },
+        home: {
+          name: "BAYERN MUNIQUE",
+          abbr: "BAY",
+          bg: "#dc2626",
+          color: "#ffffff",
+          form: ["V", "V", "V", "E", "V"],
+          stats: [
+            [3, 4, 2, 1, 3], [0, 1, 1, 1, 0], [22, 25, 19, 17, 21], [11, 13, 9, 8, 10],
+            [7, 8, 9, 10, 7], [9, 11, 8, 6, 9], [3, 3, 4, 4, 2], [9, 10, 8, 7, 9],
+            [5, 5, 4, 3, 5], [3, 3, 4, 4, 2], [1, 1, 2, 2, 1], [10, 9, 11, 12, 10],
+            [17, 18, 16, 17, 18], [1, 2, 2, 2, 1], [2, 3, 2, 1, 2], [5, 5, 6, 7, 5],
+            [645, 670, 620, 610, 655], [2, 2, 3, 3, 2]
+          ],
+          players: buildFullSquad([
+            ["Manuel Neuer", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,1,0,0]],
+            ["Konrad Laimer", "LAT", "Titular", [1,1,2,1,1], [0,1,1,0,0], [3,4,3,3,4], [2,1,2,2,1], [1,1,2,1,1]],
+            ["Dayot Upamecano", "ZAG", "Titular", [1,1,0,1,1], [0,1,0,0,0], [3,2,3,3,2], [1,2,1,1,2], [1,0,1,1,0]],
+            ["Min-jae Kim", "ZAG", "Titular", [1,0,1,1,1], [0,0,1,0,1], [2,3,3,2,3], [1,1,2,1,1], [0,1,0,1,1]],
+            ["Alphonso Davies", "LAT", "Titular", [2,2,1,1,2], [1,1,0,0,1], [2,3,2,2,3], [1,1,1,2,1], [2,2,2,1,2]],
+            ["Joshua Kimmich", "VOL", "Titular", [2,2,1,2,2], [1,1,0,1,1], [3,4,3,3,3], [1,1,2,1,1], [2,3,2,2,2]],
+            ["Aleksandar Pavlović", "VOL", "Titular", [1,2,1,1,1], [0,1,0,0,1], [3,2,3,3,2], [1,2,1,1,1], [2,1,2,2,1]],
+            ["Jamal Musiala", "MEI", "Titular", [4,5,3,3,4], [2,3,1,2,2], [2,1,2,2,1], [1,0,1,1,1], [4,4,3,4,4]],
+            ["Michael Olise", "ATA", "Titular", [3,4,3,2,3], [2,2,1,1,2], [1,2,1,1,1], [1,1,0,1,1], [3,2,3,2,3]],
+            ["Serge Gnabry", "ATA", "Titular", [3,3,2,2,3], [1,2,1,1,1], [1,1,0,1,1], [1,1,1,0,1], [2,2,1,2,2]],
+            ["Harry Kane", "ATA", "Titular", [5,6,4,3,5], [3,4,2,2,3], [0,1,0,0,1], [1,1,2,1,1], [2,3,2,2,2]],
+            ["Leroy Sané", "ATA", "Reserva", [3,2,2,2,3], [1,1,1,1,1], [1,0,1,0,1], [1,1,0,1,1], [2,2,2,1,2]],
+            ["Thomas Müller", "MEI", "Reserva", [2,2,1,1,2], [1,1,0,0,1], [1,1,1,0,1], [0,1,0,1,0], [1,1,1,1,1]]
+          ])
+        },
+        away: {
+          name: "PARIS SAINT-GERMAIN",
+          abbr: "PSG",
+          bg: "linear-gradient(135deg, #0f172a 55%, #dc2626 45%)",
           color: "#ffffff",
           form: ["V", "V", "E", "V", "V"],
           stats: [
-            [2, 3, 1, 2, 2],
-            [0, 1, 1, 0, 1],
-            [18, 22, 15, 19, 21],
-            [9, 11, 7, 10, 9],
-            [9, 8, 11, 7, 10],
-            [7, 8, 5, 6, 8],
-            [3, 2, 4, 2, 3],
-            [8, 11, 7, 9, 8],
-            [4, 6, 3, 5, 4],
-            [3, 2, 5, 3, 4],
-            [1, 1, 2, 1, 2],
-            [11, 12, 14, 10, 13],
-            [18, 20, 16, 19, 17],
-            [2, 3, 2, 1, 2],
-            [1, 2, 1, 1, 2],
-            [7, 6, 8, 6, 7],
-            [510, 545, 490, 532, 518],
-            [3, 1, 3, 2, 2]
+            [3, 2, 1, 3, 2], [1, 0, 1, 1, 0], [20, 18, 16, 21, 19], [10, 9, 8, 11, 9],
+            [9, 8, 10, 9, 8], [8, 7, 6, 9, 8], [3, 3, 4, 3, 3], [8, 7, 7, 9, 8],
+            [4, 4, 3, 5, 4], [3, 3, 4, 3, 3], [1, 1, 2, 1, 1], [10, 11, 11, 10, 9],
+            [18, 17, 16, 19, 18], [2, 2, 2, 1, 2], [2, 2, 1, 2, 2], [6, 5, 7, 6, 5],
+            [660, 645, 625, 675, 650], [3, 2, 3, 2, 3]
           ],
-          players: [
-            { name: "Weverton", pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [1,0,0,1,0] },
-            { name: "Marcos Rocha", pos: "LAT", role: "Titular", fin: [1,0,1,1,0], sot: [0,0,0,1,0], tac: [3,3,2,3,2], fc: [1,2,1,1,1], fs: [1,1,2,1,1] },
-            { name: "Gustavo Gómez", pos: "ZAG", role: "Titular", fin: [1,2,1,1,2], sot: [1,1,0,1,1], tac: [2,3,2,3,2], fc: [2,1,2,1,2], fs: [1,1,0,1,1] },
-            { name: "Murilo", pos: "ZAG", role: "Titular", fin: [1,1,1,2,1], sot: [0,1,1,1,0], tac: [2,2,3,2,2], fc: [1,1,2,1,1], fs: [0,1,1,1,0] },
-            { name: "Piquerez", pos: "LAT", role: "Titular", fin: [1,2,1,1,2], sot: [0,1,0,1,1], tac: [2,3,2,2,3], fc: [1,1,2,1,1], fs: [1,1,1,2,1] },
-            { name: "Aníbal Moreno", pos: "VOL", role: "Titular", fin: [1,1,0,1,1], sot: [0,1,0,0,0], tac: [4,5,3,4,4], fc: [2,3,2,2,3], fs: [1,1,2,1,1] },
-            { name: "Richard Ríos", pos: "VOL", role: "Titular", fin: [2,2,1,2,1], sot: [1,1,0,1,1], tac: [3,2,3,3,2], fc: [2,2,3,1,2], fs: [2,3,2,2,3] },
-            { name: "Raphael Veiga", pos: "MEI", role: "Titular", fin: [2,3,2,2,3], sot: [1,2,1,1,1], tac: [1,1,2,1,1], fc: [1,1,0,1,1], fs: [2,2,1,2,2] },
-            { name: "Estêvão", pos: "ATA", role: "Titular", fin: [4,3,2,4,3], sot: [2,2,1,2,2], tac: [1,2,1,1,2], fc: [1,0,1,1,1], fs: [4,3,5,3,4] },
-            { name: "Felipe Anderson", pos: "ATA", role: "Titular", fin: [2,2,1,2,2], sot: [1,1,0,1,1], tac: [2,1,2,2,1], fc: [1,1,1,0,1], fs: [2,2,2,1,2] },
-            { name: "Flaco López", pos: "ATA", role: "Titular", fin: [3,4,2,3,3], sot: [2,2,1,1,2], tac: [0,1,0,1,0], fc: [2,1,2,1,2], fs: [1,2,1,2,1] },
-            { name: "Maurício", pos: "MEI", role: "Reserva", fin: [2,2,1,1,2], sot: [1,1,0,1,1], tac: [1,1,1,0,1], fc: [1,0,1,1,0], fs: [1,2,1,1,1] },
-            { name: "Rony", pos: "ATA", role: "Reserva", fin: [2,3,1,2,1], sot: [1,1,1,0,1], tac: [1,0,1,1,0], fc: [1,1,1,1,1], fs: [1,1,0,1,1] },
-            { name: "Zé Rafael", pos: "VOL", role: "Reserva", fin: [1,1,0,1,0], sot: [0,0,0,0,0], tac: [2,2,2,1,2], fc: [1,2,1,1,1], fs: [2,1,2,1,2] }
-          ]
-        },
-        away: {
-          name: "BOTAFOGO",
-          abbr: "BOT",
-          bg: "linear-gradient(135deg, #111827 50%, #f8fafc 50%)",
-          color: "#f59e0b",
-          form: ["V", "E", "V", "D", "V"],
-          stats: [
-            [2, 1, 2, 0, 3],
-            [1, 1, 0, 2, 1],
-            [14, 12, 16, 11, 17],
-            [6, 5, 8, 4, 8],
-            [13, 15, 11, 16, 12],
-            [6, 4, 7, 3, 7],
-            [4, 5, 3, 6, 4],
-            [6, 5, 7, 4, 6],
-            [3, 2, 4, 2, 3],
-            [5, 6, 4, 7, 5],
-            [2, 3, 2, 3, 2],
-            [13, 15, 12, 14, 11],
-            [19, 17, 21, 16, 18],
-            [3, 4, 2, 3, 2],
-            [2, 1, 2, 1, 1],
-            [9, 10, 8, 11, 9],
-            [440, 425, 475, 412, 468],
-            [3, 4, 3, 4, 3]
-          ],
-          players: [
-            { name: "John", pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [1,0,1,0,0] },
-            { name: "Vitinho", pos: "LAT", role: "Titular", fin: [1,0,1,1,1], sot: [0,0,1,0,0], tac: [3,2,3,3,2], fc: [1,2,1,1,2], fs: [1,1,1,2,1] },
-            { name: "Bastos", pos: "ZAG", role: "Titular", fin: [1,1,0,1,1], sot: [0,1,0,0,1], tac: [3,2,3,2,3], fc: [2,1,2,2,1], fs: [0,1,1,0,1] },
-            { name: "Barboza", pos: "ZAG", role: "Titular", fin: [1,0,1,1,1], sot: [1,0,0,1,0], tac: [2,3,3,2,2], fc: [2,3,2,2,2], fs: [1,1,0,1,1] },
-            { name: "Alex Telles", pos: "LAT", role: "Titular", fin: [1,1,2,1,1], sot: [0,1,1,0,1], tac: [2,2,3,2,2], fc: [1,2,1,1,1], fs: [1,1,1,2,1] },
-            { name: "Gregore", pos: "VOL", role: "Titular", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [4,5,4,3,4], fc: [3,3,2,3,2], fs: [1,1,2,1,1] },
-            { name: "Marlon Freitas", pos: "VOL", role: "Titular", fin: [1,1,1,0,1], sot: [0,0,1,0,0], tac: [3,3,4,3,3], fc: [2,2,1,2,2], fs: [1,2,1,1,2] },
-            { name: "Thiago Almada", pos: "MEI", role: "Titular", fin: [2,3,2,2,3], sot: [1,2,1,1,2], tac: [1,2,1,1,2], fc: [1,1,0,1,1], fs: [3,3,4,2,3] },
-            { name: "Luiz Henrique", pos: "ATA", role: "Titular", fin: [3,3,2,2,4], sot: [1,2,1,1,2], tac: [1,0,2,1,1], fc: [1,2,1,1,1], fs: [3,4,2,3,3] },
-            { name: "Savarino", pos: "ATA", role: "Titular", fin: [2,2,3,1,2], sot: [1,1,2,0,1], tac: [1,2,1,1,2], fc: [0,1,1,1,0], fs: [2,1,2,2,2] },
-            { name: "Igor Jesus", pos: "ATA", role: "Titular", fin: [3,2,4,2,3], sot: [2,1,2,1,2], tac: [1,1,0,1,1], fc: [2,2,1,2,1], fs: [3,2,3,2,3] },
-            { name: "Matheus Martins", pos: "ATA", role: "Reserva", fin: [2,1,2,1,2], sot: [1,0,1,1,1], tac: [1,1,0,1,0], fc: [1,1,1,0,1], fs: [2,1,1,2,1] },
-            { name: "Tiquinho Soares", pos: "ATA", role: "Reserva", fin: [2,2,1,2,1], sot: [1,1,0,1,1], tac: [0,0,1,0,0], fc: [1,2,1,1,1], fs: [1,1,2,1,1] },
-            { name: "Danilo Barbosa", pos: "VOL", role: "Reserva", fin: [1,0,1,0,1], sot: [0,0,0,0,0], tac: [2,3,2,2,2], fc: [2,1,2,1,2], fs: [1,0,1,1,0] }
-          ]
+          players: buildFullSquad([
+            ["Donnarumma", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,1,0,0,0]],
+            ["Achraf Hakimi", "LAT", "Titular", [3,2,2,3,2], [1,1,1,2,1], [3,2,3,3,2], [1,1,2,1,1], [2,2,1,2,2]],
+            ["Marquinhos", "ZAG", "Titular", [1,1,0,1,1], [0,1,0,0,0], [2,3,2,3,2], [1,1,1,1,2], [1,0,1,1,0]],
+            ["Willian Pacho", "ZAG", "Titular", [1,0,1,0,1], [0,0,0,0,1], [3,2,3,3,2], [1,2,1,1,1], [0,1,0,1,1]],
+            ["Nuno Mendes", "LAT", "Titular", [2,1,1,2,2], [1,0,0,1,1], [3,3,2,3,3], [1,1,2,1,1], [2,2,2,1,2]],
+            ["Vitinha", "VOL", "Titular", [2,2,2,3,2], [1,1,1,1,1], [3,2,3,3,2], [1,1,1,0,1], [3,2,3,3,2]],
+            ["João Neves", "VOL", "Titular", [2,1,2,2,1], [1,0,1,1,0], [4,4,3,4,4], [2,2,1,2,2], [2,2,2,1,2]],
+            ["Warren Zaïre-Emery", "MEI", "Titular", [2,2,1,2,2], [1,1,0,1,1], [3,3,2,3,3], [1,2,1,1,1], [2,1,2,2,1]],
+            ["Ousmane Dembélé", "ATA", "Titular", [4,4,3,5,4], [2,2,1,2,2], [1,1,0,1,1], [1,1,1,0,1], [3,3,3,4,3]],
+            ["Bradley Barcola", "ATA", "Titular", [4,3,3,4,3], [2,2,1,2,2], [1,0,1,1,1], [1,1,1,1,0], [3,3,2,3,3]],
+            ["Randal Kolo Muani", "ATA", "Titular", [3,2,2,3,3], [1,1,1,2,1], [0,1,0,0,1], [2,1,2,1,1], [2,2,2,1,2]],
+            ["Lee Kang-in", "MEI", "Reserva", [2,2,1,2,2], [1,1,0,1,1], [1,1,1,0,1], [1,0,1,1,0], [2,1,2,1,2]]
+          ])
         }
       },
+
+      // 5. UEFA CHAMPIONS LEAGUE (QUARTA 25/11)
       {
-        id: "rma-fcb",
-        tabLabel: "Real Madrid x Barcelona",
-        league: "LA LIGA",
-        roundDate: "Rodada 14 • 23/11/2026 • 17:00",
-        stadium: "SANTIAGO BERNABÉU",
-        city: "Madri, Espanha",
+        id: "liv-rma",
+        leagueKey: "UEFA Champions League",
+        tabLabel: "Liverpool x Real Madrid",
+        subLabel: "Qua 25/11 • 17:00",
+        league: "UEFA CHAMPIONS LEAGUE • FASE DE LIGA",
+        roundDate: "Quarta, 25/11/2026 • 17:00 (BRT)",
+        stadium: "ANFIELD",
+        city: "Liverpool, Inglaterra",
         referee: {
-          name: "GIL MANZANO",
-          matches: "28 Partidas (26/27)",
-          yellow: "145 Cartões (Média: 5.18)",
-          red: "8 Cartões (Média: 0.28)",
-          pen: "9 Pênaltis (Média: 0.32)"
+          name: "FRANÇOIS LETEXIER",
+          matches: "21 Partidas (UEFA 26/27)",
+          yellow: "88 Cartões (Média: 4.19)",
+          red: "4 Cartões (Média: 0.19)",
+          pen: "6 Pênaltis (Média: 0.28)"
         },
         home: {
+          name: "LIVERPOOL",
+          abbr: "LIV",
+          bg: "#b91c1c",
+          color: "#ffffff",
+          form: ["V", "V", "V", "V", "E"],
+          stats: [
+            [3, 2, 3, 2, 1], [0, 1, 1, 0, 1], [19, 17, 21, 18, 16], [9, 8, 11, 9, 8],
+            [9, 10, 8, 9, 11], [8, 7, 9, 7, 6], [3, 4, 3, 3, 4], [8, 7, 9, 8, 7],
+            [4, 4, 5, 4, 3], [4, 4, 3, 4, 5], [2, 2, 1, 2, 2], [11, 10, 11, 12, 11],
+            [19, 18, 20, 19, 17], [2, 1, 2, 2, 2], [2, 2, 1, 2, 2], [6, 7, 5, 6, 7],
+            [585, 570, 610, 590, 565], [3, 3, 2, 3, 3]
+          ],
+          players: buildFullSquad([
+            ["Alisson Becker", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,1,0,0]],
+            ["Alexander-Arnold", "LAT", "Titular", [2,2,3,2,2], [1,1,1,1,1], [2,3,2,2,3], [1,1,1,2,1], [2,1,2,1,2]],
+            ["Ibrahima Konaté", "ZAG", "Titular", [1,1,1,0,1], [0,1,0,0,0], [3,3,2,3,3], [2,1,2,1,2], [1,0,1,1,0]],
+            ["Virgil van Dijk", "ZAG", "Titular", [1,1,2,1,1], [1,0,1,0,1], [2,2,3,2,2], [1,1,1,1,1], [1,1,0,1,1]],
+            ["Andy Robertson", "LAT", "Titular", [1,1,2,1,1], [0,0,1,0,0], [3,2,3,3,2], [1,2,1,1,1], [1,2,1,1,2]],
+            ["Ryan Gravenberch", "VOL", "Titular", [1,2,1,1,1], [0,1,0,0,1], [4,3,4,4,3], [1,2,1,1,1], [3,2,3,3,2]],
+            ["Alexis Mac Allister", "VOL", "Titular", [2,2,2,1,2], [1,1,1,0,1], [3,4,3,3,3], [2,2,1,2,2], [3,3,2,3,3]],
+            ["Dominik Szoboszlai", "MEI", "Titular", [3,2,3,3,2], [1,1,2,1,1], [2,2,3,2,2], [1,1,1,2,1], [2,2,2,1,2]],
+            ["Mohamed Salah", "ATA", "Titular", [4,5,4,4,3], [2,3,2,2,2], [1,0,1,1,1], [1,0,1,1,0], [3,3,4,3,3]],
+            ["Luis Díaz", "ATA", "Titular", [3,3,4,3,2], [2,1,2,2,1], [1,2,1,1,1], [1,1,2,1,1], [3,4,3,3,3]],
+            ["Darwin Núñez", "ATA", "Titular", [4,3,5,3,3], [2,1,3,1,1], [1,1,0,1,0], [2,2,2,1,2], [2,2,2,2,1]],
+            ["Cody Gakpo", "ATA", "Reserva", [2,3,2,2,2], [1,2,1,1,1], [1,1,0,1,1], [1,1,0,1,1], [1,2,1,1,1]],
+            ["Curtis Jones", "MEI", "Reserva", [1,2,1,1,1], [0,1,0,0,1], [2,2,2,1,2], [1,1,1,0,1], [2,1,2,1,2]]
+          ])
+        },
+        away: {
           name: "REAL MADRID",
           abbr: "RMA",
           bg: "#f8fafc",
           color: "#1e3a8a",
           form: ["V", "V", "V", "E", "V"],
           stats: [
-            [3, 2, 4, 1, 3],
-            [1, 0, 1, 1, 1],
-            [20, 18, 24, 15, 22],
-            [9, 8, 12, 7, 10],
-            [10, 9, 11, 12, 9],
-            [8, 7, 10, 5, 9],
-            [4, 3, 4, 5, 3],
-            [7, 8, 9, 6, 8],
-            [4, 4, 5, 3, 4],
-            [4, 3, 4, 5, 3],
-            [2, 1, 2, 2, 1],
-            [10, 11, 9, 12, 10],
-            [16, 18, 15, 17, 16],
-            [2, 2, 1, 3, 2],
-            [3, 2, 4, 2, 3],
-            [6, 5, 7, 8, 6],
-            [610, 640, 595, 622, 635],
-            [3, 3, 3, 4, 2]
+            [3, 2, 4, 1, 3], [1, 0, 1, 1, 1], [20, 18, 24, 15, 22], [9, 8, 12, 7, 10],
+            [10, 9, 11, 12, 9], [8, 7, 10, 5, 9], [4, 3, 4, 5, 3], [7, 8, 9, 6, 8],
+            [4, 4, 5, 3, 4], [4, 3, 4, 5, 3], [2, 1, 2, 2, 1], [10, 11, 9, 12, 10],
+            [16, 18, 15, 17, 16], [2, 2, 1, 3, 2], [3, 2, 4, 2, 3], [6, 5, 7, 8, 6],
+            [610, 640, 595, 622, 635], [3, 3, 3, 4, 2]
           ],
-          players: [
-            { name: "Courtois", pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [0,1,0,0,1] },
-            { name: "Carvajal", pos: "LAT", role: "Titular", fin: [1,1,2,1,1], sot: [0,1,1,0,0], tac: [3,3,2,3,3], fc: [2,1,2,2,1], fs: [2,1,2,1,2] },
-            { name: "Éder Militão", pos: "ZAG", role: "Titular", fin: [1,1,1,0,1], sot: [0,1,0,0,1], tac: [2,3,2,2,3], fc: [1,1,2,1,1], fs: [1,0,1,1,0] },
-            { name: "Rüdiger", pos: "ZAG", role: "Titular", fin: [1,2,1,1,1], sot: [1,1,0,0,1], tac: [2,2,3,2,2], fc: [1,2,1,2,1], fs: [1,1,0,1,1] },
-            { name: "Ferland Mendy", pos: "LAT", role: "Titular", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [3,2,3,3,2], fc: [1,1,2,1,1], fs: [1,1,1,2,1] },
-            { name: "Tchouaméni", pos: "VOL", role: "Titular", fin: [1,1,0,1,1], sot: [0,0,0,0,1], tac: [4,3,4,3,4], fc: [2,3,2,2,2], fs: [1,1,2,1,1] },
-            { name: "Fede Valverde", pos: "MEI", role: "Titular", fin: [2,3,2,2,2], sot: [1,1,1,1,1], tac: [3,3,2,4,3], fc: [1,1,1,2,1], fs: [1,2,1,1,1] },
-            { name: "Jude Bellingham", pos: "MEI", role: "Titular", fin: [3,2,3,2,3], sot: [2,1,2,1,1], tac: [3,2,3,3,2], fc: [2,2,1,2,2], fs: [3,2,3,2,3] },
-            { name: "Rodrygo", pos: "ATA", role: "Titular", fin: [3,2,3,2,3], sot: [1,1,2,1,2], tac: [1,1,0,1,1], fc: [1,0,1,1,0], fs: [2,2,3,2,2] },
-            { name: "Vinícius Júnior", pos: "ATA", role: "Titular", fin: [4,5,4,3,5], sot: [2,3,2,1,3], tac: [1,0,1,1,1], fc: [2,1,2,2,1], fs: [4,5,4,3,4] },
-            { name: "Kylian Mbappé", pos: "ATA", role: "Titular", fin: [5,4,6,3,5], sot: [3,2,4,2,3], tac: [0,1,0,0,1], fc: [1,1,0,1,1], fs: [2,3,2,2,3] },
-            { name: "Camavinga", pos: "VOL", role: "Reserva", fin: [1,1,1,0,1], sot: [0,0,1,0,0], tac: [3,4,3,2,3], fc: [2,2,1,2,1], fs: [2,1,2,2,1] },
-            { name: "Brahim Díaz", pos: "MEI", role: "Reserva", fin: [2,2,1,2,1], sot: [1,1,0,1,1], tac: [1,1,1,0,1], fc: [1,0,1,1,0], fs: [2,2,1,2,1] },
-            { name: "Endrick", pos: "ATA", role: "Reserva", fin: [2,3,2,1,2], sot: [1,2,1,1,1], tac: [0,0,1,0,0], fc: [1,1,1,0,1], fs: [1,1,1,1,1] }
-          ]
+          players: buildFullSquad([
+            ["Thibaut Courtois", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,1,0,0,1]],
+            ["Lucas Vázquez", "LAT", "Titular", [1,1,2,1,1], [0,1,1,0,0], [3,2,3,2,3], [1,1,2,1,1], [2,1,2,1,2]],
+            ["Éder Militão", "ZAG", "Titular", [1,1,1,0,1], [0,1,0,0,1], [2,3,2,2,3], [1,1,2,1,1], [1,0,1,1,0]],
+            ["Antonio Rüdiger", "ZAG", "Titular", [1,2,1,1,1], [1,1,0,0,1], [2,2,3,2,2], [1,2,1,2,1], [1,1,0,1,1]],
+            ["Ferland Mendy", "LAT", "Titular", [0,1,0,1,0], [0,0,0,0,0], [3,2,3,3,2], [1,1,2,1,1], [1,1,1,2,1]],
+            ["Eduardo Camavinga", "VOL", "Titular", [1,1,1,0,1], [0,0,1,0,0], [4,4,3,3,4], [2,2,1,2,1], [2,2,2,2,1]],
+            ["Fede Valverde", "MEI", "Titular", [2,3,2,2,2], [1,1,1,1,1], [3,3,2,4,3], [1,1,1,2,1], [1,2,1,1,1]],
+            ["Jude Bellingham", "MEI", "Titular", [3,2,3,2,3], [2,1,2,1,1], [3,2,3,3,2], [2,2,1,2,2], [3,2,3,2,3]],
+            ["Rodrygo", "ATA", "Titular", [3,2,3,2,3], [1,1,2,1,2], [1,1,0,1,1], [1,0,1,1,0], [2,2,3,2,2]],
+            ["Vinícius Júnior", "ATA", "Titular", [4,5,4,3,5], [2,3,2,1,3], [1,0,1,1,1], [2,1,2,2,1], [4,5,4,3,4]],
+            ["Kylian Mbappé", "ATA", "Titular", [5,4,6,3,5], [3,2,4,2,3], [0,1,0,0,1], [1,1,0,1,1], [2,3,2,2,3]],
+            ["Brahim Díaz", "MEI", "Reserva", [2,2,1,2,1], [1,1,0,1,1], [1,1,1,0,1], [1,0,1,1,0], [2,2,1,2,1]],
+            ["Endrick", "ATA", "Reserva", [2,3,2,1,2], [1,2,1,1,1], [0,0,1,0,0], [1,1,1,0,1], [1,1,1,1,1]]
+          ])
+        }
+      },
+
+      // 6. UEFA EUROPA LEAGUE (QUINTA 26/11)
+      {
+        id: "tot-rom",
+        leagueKey: "UEFA Europa League",
+        tabLabel: "Tottenham x Roma",
+        subLabel: "Qui 26/11 • 17:00",
+        league: "UEFA EUROPA LEAGUE • FASE DE LIGA",
+        roundDate: "Quinta, 26/11/2026 • 17:00 (BRT)",
+        stadium: "TOTTENHAM HOTSPUR STADIUM",
+        city: "Londres, Inglaterra",
+        referee: {
+          name: "GLENN NYBERG",
+          matches: "18 Partidas (UEFA 26/27)",
+          yellow: "76 Cartões (Média: 4.22)",
+          red: "3 Cartões (Média: 0.17)",
+          pen: "5 Pênaltis (Média: 0.28)"
+        },
+        home: {
+          name: "TOTTENHAM",
+          abbr: "TOT",
+          bg: "#f8fafc",
+          color: "#0f172a",
+          form: ["V", "D", "V", "V", "E"],
+          stats: [
+            [3, 1, 4, 2, 1], [1, 2, 1, 1, 1], [19, 16, 22, 18, 17], [9, 7, 11, 9, 8],
+            [11, 13, 10, 11, 12], [8, 6, 9, 7, 7], [4, 5, 4, 4, 4], [9, 8, 10, 8, 9],
+            [5, 4, 5, 4, 4], [4, 5, 4, 4, 5], [2, 2, 2, 2, 2], [12, 13, 11, 12, 12],
+            [20, 19, 21, 20, 19], [2, 3, 2, 2, 2], [2, 1, 2, 2, 1], [6, 7, 5, 6, 7],
+            [590, 565, 615, 585, 575], [3, 4, 3, 3, 3]
+          ],
+          players: buildFullSquad([
+            ["Guglielmo Vicario", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,1,0,0,1]],
+            ["Pedro Porro", "LAT", "Titular", [2,3,2,2,3], [1,1,1,1,1], [3,3,2,3,3], [1,1,2,1,1], [2,2,1,2,2]],
+            ["Cristian Romero", "ZAG", "Titular", [1,1,1,0,1], [0,1,0,0,1], [3,4,3,3,4], [2,3,2,2,2], [1,0,1,1,0]],
+            ["Micky van de Ven", "ZAG", "Titular", [1,0,1,1,0], [0,0,0,1,0], [3,2,3,3,2], [1,1,1,1,2], [1,1,0,1,1]],
+            ["Destiny Udogie", "LAT", "Titular", [1,2,1,1,1], [0,1,0,0,1], [3,3,2,3,2], [1,2,1,1,1], [2,2,2,1,2]],
+            ["Yves Bissouma", "VOL", "Titular", [1,1,0,1,1], [0,0,0,0,1], [4,3,4,4,3], [2,2,2,1,2], [2,1,2,2,1]],
+            ["Pape Matar Sarr", "VOL", "Titular", [2,1,2,2,1], [1,0,1,1,0], [3,3,2,3,3], [1,2,1,1,2], [2,2,1,2,2]],
+            ["James Maddison", "MEI", "Titular", [3,2,3,3,2], [1,1,2,1,1], [2,1,2,2,1], [1,1,0,1,1], [3,4,3,3,4]],
+            ["Brennan Johnson", "ATA", "Titular", [3,3,4,3,3], [2,1,2,2,1], [1,1,0,1,1], [1,0,1,1,0], [2,2,2,1,2]],
+            ["Heung-min Son", "ATA", "Titular", [4,3,4,3,4], [2,2,2,1,2], [1,0,1,1,1], [1,1,0,1,1], [3,2,3,3,2]],
+            ["Dominic Solanke", "ATA", "Titular", [3,4,3,3,3], [2,2,1,2,1], [1,1,1,0,1], [2,2,1,2,1], [2,2,3,2,2]],
+            ["Dejan Kulusevski", "MEI", "Reserva", [2,2,3,2,2], [1,1,1,1,1], [2,2,1,2,2], [1,1,1,0,1], [2,3,2,2,2]]
+          ])
         },
         away: {
-          name: "BARCELONA",
-          abbr: "FCB",
-          bg: "linear-gradient(135deg, #1d4ed8 50%, #b91c1c 50%)",
-          color: "#facc15",
-          form: ["V", "V", "V", "V", "D"],
+          name: "AS ROMA",
+          abbr: "ROM",
+          bg: "#881337",
+          color: "#fbbf24",
+          form: ["E", "V", "D", "E", "V"],
           stats: [
-            [3, 4, 2, 3, 1],
-            [1, 1, 0, 1, 2],
-            [19, 22, 17, 20, 15],
-            [10, 11, 8, 9, 7],
-            [9, 10, 8, 11, 13],
-            [8, 9, 7, 8, 5],
-            [3, 4, 3, 4, 5],
-            [8, 9, 7, 8, 6],
-            [4, 5, 3, 4, 3],
-            [3, 4, 3, 4, 5],
-            [1, 2, 1, 2, 2],
-            [11, 10, 12, 11, 13],
-            [18, 19, 17, 18, 16],
-            [2, 1, 2, 2, 3],
-            [1, 2, 1, 1, 2],
-            [6, 7, 5, 6, 8],
-            [655, 680, 630, 660, 615],
-            [2, 3, 3, 3, 3]
+            [1, 2, 0, 1, 2], [1, 1, 2, 1, 1], [14, 15, 12, 13, 16], [6, 7, 5, 6, 8],
+            [13, 12, 15, 13, 12], [5, 6, 4, 5, 6], [4, 4, 5, 4, 4], [6, 6, 5, 5, 7],
+            [3, 3, 2, 2, 3], [5, 5, 6, 5, 4], [2, 2, 3, 2, 2], [13, 12, 14, 13, 12],
+            [18, 19, 17, 18, 19], [3, 2, 3, 3, 2], [2, 1, 2, 2, 1], [8, 8, 9, 8, 7],
+            [505, 520, 485, 500, 530], [3, 3, 4, 3, 3]
           ],
-          players: [
-            { name: "Iñaki Peña", pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [0,0,1,0,0] },
-            { name: "Koundé", pos: "LAT", role: "Titular", fin: [1,1,1,2,1], sot: [0,1,0,1,0], tac: [3,3,2,3,2], fc: [1,1,2,1,1], fs: [1,1,1,1,2] },
-            { name: "Pau Cubarsí", pos: "ZAG", role: "Titular", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [2,3,2,2,3], fc: [1,1,1,1,2], fs: [1,0,1,1,0] },
-            { name: "Iñigo Martínez", pos: "ZAG", role: "Titular", fin: [1,1,1,0,1], sot: [0,1,0,0,0], tac: [2,2,3,2,2], fc: [2,1,2,1,2], fs: [1,1,0,1,1] },
-            { name: "Alejandro Balde", pos: "LAT", role: "Titular", fin: [1,2,1,1,1], sot: [0,1,0,0,1], tac: [2,2,2,3,2], fc: [1,1,1,1,2], fs: [2,2,1,2,1] },
-            { name: "Marc Casadó", pos: "VOL", role: "Titular", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [4,4,5,3,4], fc: [2,2,3,2,3], fs: [1,2,1,1,2] },
-            { name: "Pedri", pos: "MEI", role: "Titular", fin: [1,2,1,1,1], sot: [1,1,0,1,0], tac: [2,3,2,2,3], fc: [1,1,0,1,1], fs: [3,2,3,3,2] },
-            { name: "Dani Olmo", pos: "MEI", role: "Titular", fin: [3,3,2,3,2], sot: [2,2,1,2,1], tac: [1,1,2,1,1], fc: [1,1,1,1,1], fs: [2,3,2,2,2] },
-            { name: "Lamine Yamal", pos: "ATA", role: "Titular", fin: [4,4,3,4,3], sot: [2,2,2,2,1], tac: [1,2,1,1,1], fc: [1,0,1,1,1], fs: [3,4,3,3,4] },
-            { name: "Raphinha", pos: "ATA", role: "Titular", fin: [3,5,3,4,2], sot: [2,3,1,2,1], tac: [2,2,1,2,2], fc: [1,2,1,1,2], fs: [2,2,3,2,2] },
-            { name: "Lewandowski", pos: "ATA", role: "Titular", fin: [4,4,3,3,3], sot: [2,3,2,2,1], tac: [0,0,1,0,0], fc: [1,1,2,1,1], fs: [2,1,2,2,1] },
-            { name: "Gavi", pos: "MEI", role: "Reserva", fin: [1,1,1,1,0], sot: [0,1,0,0,0], tac: [3,3,2,3,3], fc: [2,3,2,2,2], fs: [2,2,2,1,2] },
-            { name: "Frenkie de Jong", pos: "VOL", role: "Reserva", fin: [1,1,0,1,1], sot: [0,0,0,1,0], tac: [2,2,2,1,2], fc: [1,1,1,1,1], fs: [2,1,2,2,1] },
-            { name: "Ferran Torres", pos: "ATA", role: "Reserva", fin: [2,2,1,2,1], sot: [1,1,1,1,0], tac: [1,0,1,0,1], fc: [1,1,0,1,1], fs: [1,1,1,1,1] }
-          ]
+          players: buildFullSquad([
+            ["Mile Svilar", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,1,0,0,1]],
+            ["Gianluca Mancini", "ZAG", "Titular", [1,1,0,1,1], [0,1,0,0,1], [3,3,2,3,3], [2,3,2,2,2], [1,1,0,1,1]],
+            ["Evan Ndicka", "ZAG", "Titular", [1,0,1,0,1], [0,0,0,0,0], [2,3,3,2,2], [1,1,2,1,1], [0,1,0,1,0]],
+            ["Angeliño", "LAT", "Titular", [1,2,1,1,2], [0,1,0,0,1], [2,2,3,2,2], [1,1,1,2,1], [2,1,2,1,2]],
+            ["Zeki Çelik", "LAT", "Titular", [1,0,1,1,0], [0,0,0,0,0], [3,2,3,3,2], [2,2,1,2,2], [1,1,1,1,1]],
+            ["Manu Koné", "VOL", "Titular", [2,1,2,1,2], [1,0,1,0,1], [4,3,4,4,3], [2,2,3,2,2], [3,2,3,3,2]],
+            ["Bryan Cristante", "VOL", "Titular", [1,1,1,2,1], [0,0,1,1,0], [3,3,2,3,3], [2,1,2,1,2], [1,2,1,1,1]],
+            ["Lorenzo Pellegrini", "MEI", "Titular", [2,3,2,2,3], [1,1,1,1,1], [2,2,1,2,2], [1,1,1,0,1], [2,2,2,3,2]],
+            ["Paulo Dybala", "ATA", "Titular", [3,4,2,3,3], [2,2,1,1,2], [1,1,0,1,1], [1,0,1,1,0], [3,4,3,3,4]],
+            ["Matías Soulé", "ATA", "Titular", [2,3,2,2,2], [1,1,1,0,1], [1,1,2,1,1], [1,1,1,1,1], [2,2,2,2,1]],
+            ["Artem Dovbyk", "ATA", "Titular", [3,3,2,3,4], [2,1,1,2,2], [0,1,0,0,1], [2,2,1,2,1], [2,1,2,2,2]],
+            ["Stephan El Shaarawy", "ATA", "Reserva", [2,2,1,2,1], [1,1,0,1,0], [1,1,0,1,1], [1,1,0,1,1], [1,1,2,1,1]]
+          ])
+        }
+      },
+
+      // 7. UEFA CONFERENCE LEAGUE (QUINTA 26/11)
+      {
+        id: "che-hei",
+        leagueKey: "UEFA Conference League",
+        tabLabel: "Chelsea x Heidenheim",
+        subLabel: "Qui 26/11 • 14:45",
+        league: "UEFA CONFERENCE LEAGUE • FASE DE LIGA",
+        roundDate: "Quinta, 26/11/2026 • 14:45 (BRT)",
+        stadium: "STAMFORD BRIDGE",
+        city: "Londres, Inglaterra",
+        referee: {
+          name: "SERDAR GÖZÜBÜYÜK",
+          matches: "17 Partidas (UEFA 26/27)",
+          yellow: "72 Cartões (Média: 4.23)",
+          red: "3 Cartões (Média: 0.18)",
+          pen: "5 Pênaltis (Média: 0.29)"
+        },
+        home: {
+          name: "CHELSEA",
+          abbr: "CHE",
+          bg: "#1d4ed8",
+          color: "#ffffff",
+          form: ["V", "V", "V", "V", "V"],
+          stats: [
+            [4, 3, 4, 2, 3], [1, 0, 1, 1, 0], [21, 19, 23, 18, 20], [11, 9, 12, 9, 10],
+            [8, 9, 7, 10, 8], [9, 8, 10, 7, 9], [3, 3, 2, 4, 3], [8, 7, 9, 7, 8],
+            [4, 4, 5, 3, 4], [3, 4, 3, 4, 3], [1, 2, 1, 2, 1], [11, 10, 11, 12, 10],
+            [18, 17, 19, 18, 17], [2, 1, 2, 2, 1], [2, 2, 3, 2, 2], [5, 6, 5, 6, 5],
+            [625, 610, 640, 595, 630], [2, 3, 2, 3, 2]
+          ],
+          players: buildFullSquad([
+            ["Filip Jörgensen", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,1,0,0]],
+            ["Axel Disasi", "LAT", "Titular", [1,1,1,0,1], [0,1,0,0,0], [3,2,3,3,2], [1,2,1,1,1], [1,0,1,1,0]],
+            ["Tosin Adarabioyo", "ZAG", "Titular", [1,1,0,1,1], [0,0,0,1,0], [2,3,2,2,3], [1,1,2,1,1], [0,1,0,1,1]],
+            ["Benoît Badiashile", "ZAG", "Titular", [1,0,1,1,0], [0,0,1,0,0], [2,2,3,2,2], [1,2,1,1,1], [1,1,0,1,1]],
+            ["Marc Cucurella", "LAT", "Titular", [1,1,2,1,1], [0,0,1,0,0], [3,4,3,3,4], [2,2,1,2,2], [2,2,1,2,2]],
+            ["Enzo Fernández", "VOL", "Titular", [2,2,3,2,2], [1,1,1,1,1], [3,3,2,3,3], [1,2,1,1,1], [2,3,2,2,2]],
+            ["Kiernan Dewsbury-Hall", "MEI", "Titular", [2,2,2,1,2], [1,1,1,0,1], [2,2,3,2,2], [1,1,1,0,1], [2,2,2,1,2]],
+            ["João Félix", "MEI", "Titular", [4,3,4,3,4], [2,2,2,1,2], [1,1,0,1,1], [1,1,0,1,1], [3,3,4,3,3]],
+            ["Noni Madueke", "ATA", "Titular", [4,4,3,3,4], [2,2,1,2,2], [1,0,1,1,1], [1,0,1,1,0], [2,2,3,2,2]],
+            ["Mykhailo Mudryk", "ATA", "Titular", [3,3,4,2,3], [1,2,2,1,1], [1,1,1,0,1], [1,1,1,1,0], [3,2,3,2,3]],
+            ["Christopher Nkunku", "ATA", "Titular", [4,5,4,3,4], [2,3,2,2,2], [1,1,0,1,0], [1,1,1,0,1], [2,3,2,2,2]],
+            ["Marc Guiu", "ATA", "Reserva", [3,2,3,2,2], [1,1,2,1,1], [0,0,1,0,0], [1,1,1,0,1], [1,1,1,1,1]]
+          ])
+        },
+        away: {
+          name: "HEIDENHEIM",
+          abbr: "HEI",
+          bg: "#991b1b",
+          color: "#ffffff",
+          form: ["V", "D", "V", "E", "D"],
+          stats: [
+            [2, 0, 2, 1, 1], [1, 3, 1, 1, 2], [12, 9, 13, 11, 10], [5, 4, 6, 5, 4],
+            [15, 19, 14, 16, 18], [4, 3, 5, 4, 3], [6, 8, 5, 6, 7], [5, 3, 6, 4, 4],
+            [2, 1, 3, 2, 2], [6, 8, 5, 7, 7], [3, 4, 2, 3, 3], [13, 14, 12, 13, 14],
+            [19, 20, 18, 19, 18], [2, 3, 2, 2, 3], [1, 2, 1, 1, 2], [9, 11, 8, 10, 10],
+            [405, 380, 420, 395, 390], [4, 5, 4, 4, 5]
+          ],
+          players: buildFullSquad([
+            ["Kevin Müller", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [1,0,1,0,1]],
+            ["Haktab Omar Traoré", "LAT", "Titular", [1,0,1,1,0], [0,0,0,0,0], [3,3,2,3,3], [1,2,1,1,2], [1,1,1,1,1]],
+            ["Patrick Mainka", "ZAG", "Titular", [1,1,1,0,1], [0,1,0,0,0], [3,3,3,2,3], [1,1,2,1,1], [1,0,1,1,0]],
+            ["Benedikt Gimber", "ZAG", "Titular", [1,0,1,1,0], [0,0,1,0,0], [2,3,2,3,2], [2,2,2,1,2], [0,1,0,1,0]],
+            ["Jonas Föhrenbach", "LAT", "Titular", [1,1,1,0,1], [0,0,0,0,1], [2,3,2,2,3], [1,1,2,1,1], [1,1,1,2,1]],
+            ["Lennard Maloney", "VOL", "Titular", [1,0,1,1,0], [0,0,0,0,0], [4,4,3,4,4], [2,3,2,2,2], [1,1,2,1,1]],
+            ["Jan Schöppner", "VOL", "Titular", [1,1,2,1,1], [0,0,1,0,0], [3,3,3,2,3], [2,1,2,2,1], [2,1,2,1,2]],
+            ["Paul Wanner", "MEI", "Titular", [3,2,3,2,2], [1,1,2,1,1], [1,2,1,1,1], [1,1,0,1,1], [3,2,3,3,2]],
+            ["Léo Scienza", "ATA", "Titular", [3,2,3,2,3], [1,1,1,1,1], [1,1,2,1,1], [1,1,1,0,1], [2,3,2,2,2]],
+            ["Mathias Honsak", "ATA", "Titular", [2,1,2,2,1], [1,0,1,1,0], [1,1,0,1,1], [1,2,1,1,1], [1,1,2,1,1]],
+            ["Marvin Pieringer", "ATA", "Titular", [3,2,3,2,2], [1,1,1,1,1], [1,0,1,0,1], [2,2,1,2,2], [2,2,2,1,2]],
+            ["Maximilian Breunig", "ATA", "Reserva", [2,1,2,1,2], [1,0,1,0,1], [0,0,1,0,0], [1,1,1,1,1], [1,1,1,1,1]]
+          ])
+        }
+      },
+
+      // 8. BUNDESLIGA (SÁBADO 28/11)
+      {
+        id: "bvb-b04",
+        leagueKey: "Bundesliga",
+        tabLabel: "Dortmund x Leverkusen",
+        subLabel: "Sáb 28/11 • 14:30",
+        league: "BUNDESLIGA • RODADA 12",
+        roundDate: "Sábado, 28/11/2026 • 14:30 (BRT)",
+        stadium: "SIGNAL IDUNA PARK",
+        city: "Dortmund, Alemanha",
+        referee: {
+          name: "FELIX ZWAYER",
+          matches: "20 Partidas (26/27)",
+          yellow: "98 Cartões (Média: 4.90)",
+          red: "5 Cartões (Média: 0.25)",
+          pen: "7 Pênaltis (Média: 0.35)"
+        },
+        home: {
+          name: "BORUSSIA DORTMUND",
+          abbr: "BVB",
+          bg: "#facc15",
+          color: "#090d16",
+          form: ["V", "V", "E", "V", "V"],
+          stats: [
+            [3, 2, 2, 4, 2], [1, 1, 2, 1, 0], [18, 16, 17, 21, 17], [9, 8, 8, 11, 8],
+            [11, 12, 13, 10, 11], [7, 6, 7, 9, 7], [4, 4, 5, 4, 3], [7, 6, 8, 9, 7],
+            [4, 3, 4, 5, 3], [4, 5, 5, 4, 4], [2, 2, 2, 2, 2], [11, 12, 11, 10, 11],
+            [18, 17, 19, 18, 17], [2, 2, 3, 1, 2], [2, 2, 1, 2, 2], [6, 7, 7, 5, 6],
+            [565, 545, 550, 590, 560], [3, 3, 4, 3, 3]
+          ],
+          players: buildFullSquad([
+            ["Gregor Kobel", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,1,0,0,1]],
+            ["Julian Ryerson", "LAT", "Titular", [1,1,2,1,1], [0,0,1,0,1], [3,4,3,3,3], [2,1,2,1,2], [1,1,2,1,1]],
+            ["Waldemar Anton", "ZAG", "Titular", [1,0,1,1,0], [0,0,0,1,0], [2,3,2,3,2], [1,1,2,1,1], [1,0,1,0,1]],
+            ["Nico Schlotterbeck", "ZAG", "Titular", [1,2,1,1,1], [0,1,0,1,0], [3,2,3,3,2], [1,2,1,1,2], [1,1,0,1,1]],
+            ["Ramy Bensebaini", "LAT", "Titular", [1,1,1,2,1], [0,0,1,1,0], [3,3,2,3,2], [2,1,2,1,1], [1,2,1,1,1]],
+            ["Pascal Groß", "VOL", "Titular", [1,2,1,2,1], [0,1,0,1,0], [3,2,3,3,3], [1,1,1,0,1], [2,2,2,1,2]],
+            ["Felix Nmecha", "VOL", "Titular", [2,1,2,2,1], [1,0,1,1,0], [3,3,4,3,3], [2,2,1,2,2], [2,1,2,2,1]],
+            ["Julian Brandt", "MEI", "Titular", [3,2,3,3,2], [1,1,1,2,1], [1,2,1,1,1], [1,0,1,1,0], [2,2,3,2,2]],
+            ["Jamie Gittens", "ATA", "Titular", [4,3,3,4,3], [2,1,2,2,1], [1,1,0,1,1], [1,1,1,0,1], [3,3,4,3,3]],
+            ["Maximilian Beier", "ATA", "Titular", [3,2,3,3,2], [1,1,1,2,1], [1,0,1,1,0], [1,1,1,1,1], [2,2,2,1,2]],
+            ["Serhou Guirassy", "ATA", "Titular", [4,4,3,5,4], [2,2,2,3,2], [0,1,0,0,1], [2,1,2,1,1], [3,2,3,3,2]],
+            ["Donyell Malen", "ATA", "Reserva", [3,2,2,3,2], [1,1,1,1,1], [1,0,1,0,1], [1,1,0,1,1], [1,1,2,1,1]]
+          ])
+        },
+        away: {
+          name: "BAYER LEVERKUSEN",
+          abbr: "B04",
+          bg: "linear-gradient(135deg, #090d16 50%, #dc2626 50%)",
+          color: "#ffffff",
+          form: ["V", "E", "V", "V", "E"],
+          stats: [
+            [2, 2, 3, 2, 1], [1, 2, 1, 1, 1], [19, 17, 21, 18, 16], [9, 8, 10, 9, 8],
+            [10, 11, 9, 10, 11], [8, 7, 9, 7, 6], [3, 4, 3, 4, 3], [8, 7, 9, 8, 7],
+            [4, 3, 5, 4, 3], [4, 4, 3, 4, 4], [2, 2, 1, 2, 2], [10, 11, 10, 11, 10],
+            [17, 18, 16, 17, 17], [2, 2, 2, 1, 2], [2, 2, 1, 2, 2], [6, 7, 5, 6, 7],
+            [615, 595, 635, 605, 590], [3, 3, 2, 3, 3]
+          ],
+          players: buildFullSquad([
+            ["Lukáš Hrádecký", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,1,0,0]],
+            ["Edmond Tapsoba", "ZAG", "Titular", [1,1,1,0,1], [0,1,0,0,0], [2,3,2,3,2], [1,1,2,1,1], [1,0,1,1,0]],
+            ["Jonathan Tah", "ZAG", "Titular", [1,1,2,1,1], [0,0,1,0,1], [2,2,3,2,2], [1,2,1,1,1], [1,1,0,1,1]],
+            ["Piero Hincapié", "ZAG", "Titular", [1,1,1,1,0], [0,0,0,1,0], [3,3,2,3,2], [2,1,2,1,2], [1,1,1,0,1]],
+            ["Jeremie Frimpong", "LAT", "Titular", [3,2,3,3,2], [1,1,2,1,1], [2,1,2,2,1], [1,1,0,1,1], [2,3,2,2,2]],
+            ["Álex Grimaldo", "LAT", "Titular", [3,3,2,3,2], [1,2,1,1,1], [2,2,1,2,2], [1,0,1,1,0], [2,2,1,2,2]],
+            ["Granit Xhaka", "VOL", "Titular", [2,2,1,2,2], [1,1,0,1,1], [3,3,4,3,3], [2,2,1,2,2], [2,2,3,2,2]],
+            ["Robert Andrich", "VOL", "Titular", [2,1,2,1,1], [1,0,1,0,1], [3,4,3,3,3], [2,2,2,1,2], [1,1,2,1,1]],
+            ["Florian Wirtz", "MEI", "Titular", [4,4,3,4,3], [2,2,2,2,1], [2,1,2,2,1], [1,1,0,1,1], [4,3,4,3,4]],
+            ["Martin Terrier", "ATA", "Titular", [2,3,2,2,2], [1,1,1,1,0], [1,1,1,0,1], [1,1,1,1,1], [2,2,2,1,2]],
+            ["Victor Boniface", "ATA", "Titular", [4,3,5,4,3], [2,2,3,2,1], [0,1,0,0,1], [2,1,2,1,2], [2,2,3,2,2]],
+            ["Patrik Schick", "ATA", "Reserva", [3,2,3,2,2], [1,1,2,1,1], [0,0,1,0,0], [1,1,1,0,1], [1,1,1,1,1]]
+          ])
+        }
+      },
+
+      // 9. LIGUE 1 (DOMINGO 29/11)
+      {
+        id: "om-mon",
+        leagueKey: "Ligue 1",
+        tabLabel: "Marseille x Monaco",
+        subLabel: "Dom 29/11 • 16:45",
+        league: "LIGUE 1 • RODADA 13",
+        roundDate: "Domingo, 29/11/2026 • 16:45 (BRT)",
+        stadium: "STADE VÉLODROME",
+        city: "Marselha, França",
+        referee: {
+          name: "CLÉMENT TURPIN",
+          matches: "22 Partidas (26/27)",
+          yellow: "92 Cartões (Média: 4.18)",
+          red: "4 Cartões (Média: 0.18)",
+          pen: "7 Pênaltis (Média: 0.32)"
+        },
+        home: {
+          name: "OLYMPIQUE MARSEILLE",
+          abbr: "OM",
+          bg: "#f8fafc",
+          color: "#0284c7",
+          form: ["V", "D", "V", "E", "V"],
+          stats: [
+            [2, 1, 3, 2, 2], [1, 3, 1, 2, 0], [16, 14, 18, 15, 17], [8, 6, 9, 7, 8],
+            [11, 14, 10, 12, 10], [6, 5, 8, 6, 7], [4, 6, 3, 5, 3], [6, 5, 8, 6, 7],
+            [3, 2, 4, 3, 3], [4, 6, 4, 5, 4], [2, 3, 2, 2, 2], [12, 13, 11, 12, 11],
+            [18, 17, 19, 18, 19], [2, 3, 2, 2, 1], [2, 1, 2, 2, 2], [7, 8, 6, 7, 6],
+            [560, 535, 580, 550, 570], [3, 4, 2, 3, 3]
+          ],
+          players: buildFullSquad([
+            ["Gerónimo Rulli", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,1,0,0,1]],
+            ["Michael Murillo", "LAT", "Titular", [1,1,1,0,1], [0,0,1,0,0], [3,2,3,3,2], [1,2,1,1,1], [1,1,2,1,1]],
+            ["Leonardo Balerdi", "ZAG", "Titular", [1,0,1,1,0], [0,0,0,1,0], [2,3,3,2,3], [2,2,1,2,2], [1,0,1,1,0]],
+            ["Geoffrey Kondogbia", "ZAG", "Titular", [1,1,0,1,1], [0,1,0,0,0], [2,2,3,2,2], [1,2,1,1,1], [0,1,0,1,1]],
+            ["Quentin Merlin", "LAT", "Titular", [1,2,1,1,1], [0,1,0,0,1], [3,3,2,3,2], [1,1,2,1,1], [2,1,2,1,2]],
+            ["Pierre-Emile Højbjerg", "VOL", "Titular", [2,1,2,1,2], [1,0,1,0,1], [4,3,4,4,3], [2,2,1,2,2], [2,2,2,1,2]],
+            ["Adrien Rabiot", "VOL", "Titular", [2,2,3,2,2], [1,1,1,1,1], [3,3,2,3,3], [1,2,1,1,1], [2,2,3,2,2]],
+            ["Amine Harit", "MEI", "Titular", [2,2,2,1,2], [1,1,1,0,1], [1,2,1,1,1], [1,1,0,1,1], [3,3,2,3,3]],
+            ["Mason Greenwood", "ATA", "Titular", [4,3,5,4,4], [2,2,3,2,2], [1,0,1,1,1], [1,1,1,0,1], [2,3,2,2,3]],
+            ["Luis Henrique", "ATA", "Titular", [2,3,2,2,3], [1,1,1,1,1], [1,1,2,1,1], [1,0,1,1,0], [2,2,2,2,1]],
+            ["Elye Wahi", "ATA", "Titular", [3,2,3,3,3], [2,1,2,1,2], [0,1,0,0,1], [2,2,1,2,1], [2,1,2,2,2]],
+            ["Jonathan Rowe", "ATA", "Reserva", [2,2,2,1,2], [1,1,1,0,1], [1,0,1,1,0], [1,1,0,1,1], [1,1,2,1,1]]
+          ])
+        },
+        away: {
+          name: "AS MONACO",
+          abbr: "MON",
+          bg: "linear-gradient(135deg, #dc2626 50%, #f8fafc 50%)",
+          color: "#090d16",
+          form: ["V", "V", "D", "V", "E"],
+          stats: [
+            [2, 3, 1, 2, 1], [1, 1, 2, 0, 1], [17, 19, 15, 18, 16], [8, 10, 7, 9, 8],
+            [11, 10, 13, 10, 12], [7, 8, 6, 7, 6], [4, 3, 5, 3, 4], [7, 8, 6, 7, 6],
+            [3, 4, 3, 4, 3], [4, 4, 5, 4, 4], [2, 2, 2, 2, 2], [13, 12, 14, 12, 13],
+            [20, 21, 19, 20, 19], [2, 2, 3, 2, 2], [2, 1, 2, 2, 1], [7, 6, 8, 6, 7],
+            [525, 540, 505, 535, 515], [3, 2, 4, 2, 3]
+          ],
+          players: buildFullSquad([
+            ["Radosław Majecki", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,1,0,0,1]],
+            ["Vanderson", "LAT", "Titular", [2,2,1,2,1], [1,1,0,1,0], [3,3,4,3,3], [2,1,2,2,1], [2,2,1,2,2]],
+            ["Thilo Kehrer", "ZAG", "Titular", [1,1,0,1,1], [0,1,0,0,0], [2,3,2,3,2], [1,2,1,1,2], [1,0,1,1,0]],
+            ["Wilfried Singo", "ZAG", "Titular", [1,1,1,0,1], [0,0,1,0,0], [3,2,3,3,2], [2,1,2,1,2], [1,1,0,1,1]],
+            ["Caio Henrique", "LAT", "Titular", [1,2,1,1,1], [0,1,0,0,1], [2,3,2,2,3], [1,1,1,2,1], [1,2,1,1,2]],
+            ["Denis Zakaria", "VOL", "Titular", [2,1,2,2,1], [1,0,1,1,0], [4,4,3,4,4], [2,3,2,2,2], [2,1,2,2,1]],
+            ["Lamine Camara", "VOL", "Titular", [1,2,1,1,2], [0,1,0,0,1], [3,3,4,3,3], [2,2,1,2,2], [2,2,1,2,2]],
+            ["Maghnes Akliouche", "MEI", "Titular", [3,3,2,3,2], [1,2,1,1,1], [2,2,1,2,2], [1,0,1,1,0], [3,3,2,3,3]],
+            ["Aleksandr Golovin", "MEI", "Titular", [3,2,2,3,2], [1,1,1,1,1], [2,1,2,2,1], [1,1,1,0,1], [2,2,3,2,2]],
+            ["Eliesse Ben Seghir", "ATA", "Titular", [3,4,2,3,3], [2,2,1,2,1], [1,1,0,1,1], [1,1,0,1,1], [3,2,3,3,2]],
+            ["Breel Embolo", "ATA", "Titular", [3,3,2,3,3], [2,1,1,2,1], [1,0,1,1,0], [2,2,2,1,2], [2,2,2,1,2]],
+            ["Takumi Minamino", "MEI", "Reserva", [2,2,1,2,1], [1,1,0,1,0], [1,1,1,0,1], [1,1,0,1,1], [1,1,2,1,1]]
+          ])
         }
       }
     ];
 
-    let activeMatchIndex = 0;
+    let activeLeagueKey = "ALL";
+    let activeMatchId = MATCHES_DATA[0].id;
     let highlightOnly = false;
     let teamFilter = "all"; // "all" | "home" | "away"
     let sortMetricKey = null;
@@ -1288,19 +1754,56 @@
       return +(sum / arr.length).toFixed(1);
     }
 
-    function renderTabs() {
-      const container = document.getElementById("matchTabs");
-      container.innerHTML = MATCHES_DATA.map(
-        (m, idx) => `
-          <button class="match-tab ${idx === activeMatchIndex ? "active" : ""}" onclick="selectMatch(${idx})">
-            ${m.tabLabel}
-          </button>
-        `
-      ).join("");
+    function getFilteredMatches() {
+      if (activeLeagueKey === "ALL") return MATCHES_DATA;
+      return MATCHES_DATA.filter((m) => m.leagueKey === activeLeagueKey);
     }
 
-    function selectMatch(idx) {
-      activeMatchIndex = idx;
+    function renderLeaguePills() {
+      const container = document.getElementById("leaguePills");
+      container.innerHTML = LEAGUES_FILTER.map((l) => {
+        const count =
+          l.key === "ALL"
+            ? MATCHES_DATA.length
+            : MATCHES_DATA.filter((m) => m.leagueKey === l.key).length;
+        return `
+          <button class="league-btn ${l.key === activeLeagueKey ? "active" : ""}" onclick="selectLeague('${l.key}')">
+            ${l.label} (${count})
+          </button>
+        `;
+      }).join("");
+    }
+
+    function selectLeague(key) {
+      activeLeagueKey = key;
+      const list = getFilteredMatches();
+      if (list.length && !list.some((m) => m.id === activeMatchId)) {
+        activeMatchId = list[0].id;
+      }
+      sortMetricKey = null;
+      playerSearch = "";
+      renderLeaguePills();
+      renderTabs();
+      renderDashboard();
+    }
+
+    function renderTabs() {
+      const container = document.getElementById("matchTabs");
+      const list = getFilteredMatches();
+      container.innerHTML = list
+        .map(
+          (m) => `
+            <button class="match-tab ${m.id === activeMatchId ? "active" : ""}" onclick="selectMatch('${m.id}')">
+              <span>${m.tabLabel}</span>
+              <small>${m.subLabel} • ${m.leagueKey}</small>
+            </button>
+          `
+        )
+        .join("");
+    }
+
+    function selectMatch(id) {
+      activeMatchId = id;
       sortMetricKey = null;
       playerSearch = "";
       renderTabs();
@@ -1375,7 +1878,6 @@
     function buildPlayerMatrixCard(teamObj) {
       const allPlayers = teamObj.players;
 
-      // Calcula líderes de cada coluna considerando todo o elenco do time
       const maxByCol = {};
       PLAYER_COLS.forEach((col) => {
         maxByCol[col.key] = Math.max(...allPlayers.map((p) => calcAvg(p[col.key])));
@@ -1472,7 +1974,7 @@
     }
 
     function renderDashboard(keepSearchFocus = false) {
-      const m = MATCHES_DATA[activeMatchIndex];
+      const m = MATCHES_DATA.find((item) => item.id === activeMatchId) || MATCHES_DATA[0];
       const refInitials = m.referee.name
         .split(" ")
         .map((w) => w[0])
@@ -1591,7 +2093,7 @@
     }
 
     function copyTelegramSummary() {
-      const m = MATCHES_DATA[activeMatchIndex];
+      const m = MATCHES_DATA.find((item) => item.id === activeMatchId) || MATCHES_DATA[0];
       const topHomeFin = [...m.home.players].sort((a, b) => calcAvg(b.fin) - calcAvg(a.fin))[0];
       const topAwayFin = [...m.away.players].sort((a, b) => calcAvg(b.fin) - calcAvg(a.fin))[0];
 
@@ -1627,49 +2129,52 @@
     function saveNewMatch() {
       const homeName = document.getElementById("inHome").value.trim() || "MANDANTE";
       const awayName = document.getElementById("inAway").value.trim() || "VISITANTE";
-      const league = document.getElementById("inLeague").value.trim() || "CAMPEONATO";
-      const roundDate = document.getElementById("inDate").value.trim() || "Hoje • 20:00";
-      const stadiumFull = document.getElementById("inStadium").value.trim() || "Estádio Principal — Brasil";
+      const leagueKey = document.getElementById("inLeague").value;
+      const roundDate = document.getElementById("inDate").value.trim() || "Esta Semana • 17:00";
+      const stadiumFull = document.getElementById("inStadium").value.trim() || "Estádio Principal — Europa";
       const refName = document.getElementById("inRef").value.trim() || "Árbitro a Definir";
-      const refCards = document.getElementById("inRefCards").value.trim() || "4.50 | 0.20";
+      const refCards = document.getElementById("inRefCards").value.trim() || "4.40 | 0.20";
 
       const [stadium, city] = stadiumFull.split("—").map((s) => s.trim());
       const [yAvg, rAvg] = refCards.split("|").map((s) => s.trim());
 
       const genStats = () =>
         METRIC_LABELS.map((_, idx) => {
-          if (idx === 16) return [420, 460, 440, 480, 450];
-          const base = idx < 2 ? 1 : idx < 5 ? 12 : 5;
+          if (idx === 16) return [460, 490, 475, 510, 485];
+          const base = idx < 2 ? 1 : idx < 5 ? 13 : 5;
           return Array.from({ length: 5 }, () => Math.max(0, base + Math.floor(Math.random() * 5) - 2));
         });
 
-      const genFullSquad = (prefix) => [
-        { name: `${prefix} Goleiro`, pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [0,1,0,0,1] },
-        { name: `${prefix} Lateral Dir.`, pos: "LAT", role: "Titular", fin: [1,1,0,1,1], sot: [0,0,0,1,0], tac: [3,2,3,2,3], fc: [1,2,1,1,1], fs: [1,1,2,1,1] },
-        { name: `${prefix} Zagueiro 1`, pos: "ZAG", role: "Titular", fin: [1,0,1,1,0], sot: [0,0,1,0,0], tac: [2,3,2,2,3], fc: [1,1,2,1,1], fs: [1,0,1,0,1] },
-        { name: `${prefix} Zagueiro 2`, pos: "ZAG", role: "Titular", fin: [1,1,0,0,1], sot: [0,1,0,0,0], tac: [2,2,3,2,2], fc: [2,1,1,2,1], fs: [0,1,0,1,0] },
-        { name: `${prefix} Lateral Esq.`, pos: "LAT", role: "Titular", fin: [1,2,1,1,1], sot: [0,1,0,0,1], tac: [2,3,2,3,2], fc: [1,1,1,2,1], fs: [1,2,1,1,1] },
-        { name: `${prefix} Primeiro Vol.`, pos: "VOL", role: "Titular", fin: [1,0,1,1,0], sot: [0,0,0,0,0], tac: [4,3,4,3,4], fc: [2,3,2,2,2], fs: [1,1,1,2,1] },
-        { name: `${prefix} Segundo Vol.`, pos: "VOL", role: "Titular", fin: [1,2,1,1,1], sot: [0,1,0,1,0], tac: [3,2,3,3,2], fc: [2,1,2,1,2], fs: [2,1,2,1,2] },
-        { name: `${prefix} Meia Armador`, pos: "MEI", role: "Titular", fin: [2,2,1,3,2], sot: [1,1,0,2,1], tac: [1,2,1,1,2], fc: [1,1,0,1,1], fs: [2,3,2,2,3] },
-        { name: `${prefix} Ponta Dir.`, pos: "ATA", role: "Titular", fin: [2,3,2,2,3], sot: [1,2,1,1,1], tac: [1,1,1,0,1], fc: [1,1,1,1,0], fs: [2,2,3,2,2] },
-        { name: `${prefix} Ponta Esq.`, pos: "ATA", role: "Titular", fin: [3,2,2,3,2], sot: [1,1,1,2,1], tac: [1,0,1,1,1], fc: [1,1,0,1,1], fs: [3,2,2,3,2] },
-        { name: `${prefix} Centroavante`, pos: "ATA", role: "Titular", fin: [3,4,2,3,3], sot: [2,2,1,1,2], tac: [0,1,0,0,1], fc: [2,1,2,1,2], fs: [2,1,2,2,1] },
-        { name: `${prefix} Atacante Res.`, pos: "ATA", role: "Reserva", fin: [2,1,2,1,2], sot: [1,0,1,1,0], tac: [1,0,1,0,1], fc: [1,1,0,1,1], fs: [1,1,1,1,1] },
-        { name: `${prefix} Meia Res.`, pos: "MEI", role: "Reserva", fin: [1,2,1,1,1], sot: [0,1,0,0,1], tac: [1,1,2,1,1], fc: [1,1,1,0,1], fs: [1,2,1,1,1] }
-      ];
+      const genFullSquad = (prefix) =>
+        buildFullSquad([
+          [`${prefix} Goleiro`, "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,1,0,0,1]],
+          [`${prefix} Lateral Dir.`, "LAT", "Titular", [1,1,0,1,1], [0,0,0,1,0], [3,2,3,2,3], [1,2,1,1,1], [1,1,2,1,1]],
+          [`${prefix} Zagueiro 1`, "ZAG", "Titular", [1,0,1,1,0], [0,0,1,0,0], [2,3,2,2,3], [1,1,2,1,1], [1,0,1,0,1]],
+          [`${prefix} Zagueiro 2`, "ZAG", "Titular", [1,1,0,0,1], [0,1,0,0,0], [2,2,3,2,2], [2,1,1,2,1], [0,1,0,1,0]],
+          [`${prefix} Lateral Esq.`, "LAT", "Titular", [1,2,1,1,1], [0,1,0,0,1], [2,3,2,3,2], [1,1,1,2,1], [1,2,1,1,1]],
+          [`${prefix} Volante 1`, "VOL", "Titular", [1,0,1,1,0], [0,0,0,0,0], [4,3,4,3,4], [2,3,2,2,2], [1,1,1,2,1]],
+          [`${prefix} Volante 2`, "VOL", "Titular", [1,2,1,1,1], [0,1,0,1,0], [3,2,3,3,2], [2,1,2,1,2], [2,1,2,1,2]],
+          [`${prefix} Meia Armador`, "MEI", "Titular", [2,2,1,3,2], [1,1,0,2,1], [1,2,1,1,2], [1,1,0,1,1], [2,3,2,2,3]],
+          [`${prefix} Ponta Dir.`, "ATA", "Titular", [2,3,2,2,3], [1,2,1,1,1], [1,1,1,0,1], [1,1,1,1,0], [2,2,3,2,2]],
+          [`${prefix} Ponta Esq.`, "ATA", "Titular", [3,2,2,3,2], [1,1,1,2,1], [1,0,1,1,1], [1,1,0,1,1], [3,2,2,3,2]],
+          [`${prefix} Centroavante`, "ATA", "Titular", [3,4,2,3,3], [2,2,1,1,2], [0,1,0,0,1], [2,1,2,1,2], [2,1,2,2,1]],
+          [`${prefix} Atacante Res.`, "ATA", "Reserva", [2,1,2,1,2], [1,0,1,1,0], [1,0,1,0,1], [1,1,0,1,1], [1,1,1,1,1]]
+        ]);
 
+      const newId = `custom-${Date.now()}`;
       MATCHES_DATA.push({
-        id: `custom-${Date.now()}`,
+        id: newId,
+        leagueKey,
         tabLabel: `${homeName} x ${awayName}`,
-        league: league.toUpperCase(),
+        subLabel: roundDate,
+        league: leagueKey.toUpperCase(),
         roundDate,
         stadium: (stadium || "ESTÁDIO").toUpperCase(),
-        city: city || "Brasil",
+        city: city || "Europa",
         referee: {
           name: refName.toUpperCase(),
           matches: "20 Partidas (Temporada)",
-          yellow: `Média: ${yAvg || "4.50"}`,
+          yellow: `Média: ${yAvg || "4.40"}`,
           red: `Média: ${rAvg || "0.20"}`,
           pen: "Média: 0.25"
         },
@@ -1693,10 +2198,13 @@
         }
       });
 
+      activeLeagueKey = "ALL";
       closeModal();
-      selectMatch(MATCHES_DATA.length - 1);
+      renderLeaguePills();
+      selectMatch(newId);
     }
 
+    renderLeaguePills();
     renderTabs();
     renderDashboard();
   </script>
