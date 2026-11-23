@@ -1,1 +1,45 @@
+name: Atualizar Painel Arena dos Dados (Big 5 + UEFA)
 
+on:
+  schedule:
+    # Roda todo dia às 07:30 da manhã BRT (10:30 UTC)
+    - cron: '30 10 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-painel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 1. Baixar repositório
+        uses: actions/checkout@v5
+
+      - name: 2. Configurar Python 3.11
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 3. Instalar dependências
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 4. Coletar APIs de Futebol e Gerar index.html
+        env:
+          FOOTBALL_DATA_KEY: ${{ secrets.FOOTBALL_DATA_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python gerar_painel.py
+
+      - name: 5. Publicar index.html atualizado no GitHub Pages
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Arena dos Dados Bot"
+          git add index.html
+          git diff --staged --quiet || git commit -m "Atualiza grade e scouting da semana"
+          git push
