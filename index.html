@@ -3,22 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Arena dos Dados — Jogos do Dia & Matriz de Scouting</title>
+  <title>Arena dos Dados — Central Estatística & Scouting Completo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-body: #090d16;
-      --bg-panel: #111827;
-      --bg-card: #161f32;
-      --bg-row-alt: #0f1624;
-      --border: #1f2937;
-      --border-light: #2d3a4f;
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --accent-gold: #f59e0b;
-      --accent-gold-bg: rgba(245, 158, 11, 0.14);
-      --green: #10b981;
-      --yellow: #eab308;
-      --red: #ef4444;
+      --bg-base: #060911;
+      --bg-surface: #0c1220;
+      --bg-elevated: #121b2f;
+      --bg-row-alt: rgba(255, 255, 255, 0.022);
+      --border-subtle: rgba(148, 163, 184, 0.12);
+      --border-strong: rgba(148, 163, 184, 0.24);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+
+      --emerald: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.16);
+      --cyan: #06b6d4;
+      --cyan-glow: rgba(6, 182, 212, 0.15);
+      --amber: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.16);
+      --rose: #f43f5e;
       --blue: #3b82f6;
     }
 
@@ -26,44 +33,61 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
-      background-color: var(--bg-body);
-      color: var(--text-main);
-      padding: 16px;
-      line-height: 1.4;
+      background-color: var(--bg-base);
+      background-image:
+        radial-gradient(circle at 15% 0%, rgba(16, 185, 129, 0.09), transparent 38%),
+        radial-gradient(circle at 85% 5%, rgba(6, 182, 212, 0.08), transparent 38%);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 18px;
+      line-height: 1.45;
+      min-height: 100vh;
     }
 
     .container {
-      max-width: 1220px;
+      max-width: 1340px;
       margin: 0 auto;
     }
 
-    /* TOP BAR - JOGOS DO DIA */
+    /* TOP NAVIGATION BAR */
     .top-bar {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      background: var(--bg-panel);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 16px;
-      margin-bottom: 16px;
+      gap: 14px;
+      background: rgba(12, 18, 32, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 12px 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
 
     .brand {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-weight: 800;
+      font-weight: 900;
       font-size: 1.05rem;
-      letter-spacing: 0.8px;
-      color: var(--accent-gold);
+      letter-spacing: 0.6px;
       text-transform: uppercase;
+      background: linear-gradient(90deg, #34d399, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 12px var(--emerald);
+      flex-shrink: 0;
     }
 
     .match-tabs {
@@ -73,84 +97,95 @@
     }
 
     .match-tab {
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
-      color: var(--text-muted);
-      padding: 7px 14px;
-      border-radius: 8px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 8px 15px;
+      border-radius: 10px;
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       font-weight: 600;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
     }
 
     .match-tab:hover {
-      border-color: var(--accent-gold);
-      color: var(--text-main);
+      border-color: var(--cyan);
+      color: var(--text-primary);
+      transform: translateY(-1px);
     }
 
     .match-tab.active {
-      background: var(--accent-gold);
-      color: #090d16;
-      border-color: var(--accent-gold);
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #03150e;
+      border-color: #34d399;
       font-weight: 800;
+      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.35);
     }
 
     .actions-group {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
-      color: var(--text-main);
-      padding: 7px 12px;
-      border-radius: 8px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 8px 13px;
+      border-radius: 10px;
       cursor: pointer;
-      font-size: 0.82rem;
+      font-size: 0.81rem;
       font-weight: 600;
-      transition: 0.15s;
+      transition: all 0.18s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .btn:hover {
-      border-color: var(--accent-gold);
+      border-color: var(--border-strong);
+      background: #18233c;
     }
 
     .btn.active-filter {
-      background: var(--accent-gold-bg);
-      border-color: var(--accent-gold);
-      color: var(--accent-gold);
+      background: var(--amber-glow);
+      border-color: var(--amber);
+      color: #fbbf24;
     }
 
     .btn-primary {
-      background: #1d4ed8;
-      border-color: #2563eb;
-      color: #fff;
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
+      border-color: #38bdf8;
+      color: #ffffff;
+      font-weight: 700;
     }
 
     .btn-primary:hover {
-      background: #2563eb;
+      filter: brightness(1.1);
     }
 
-    /* INFOGRAPHIC CANVAS */
+    /* DASHBOARD WRAPPER */
     .dashboard {
-      background: linear-gradient(180deg, #0e1422 0%, #0b101b 100%);
-      border: 1px solid var(--border-light);
-      border-radius: 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
     }
 
-    /* CABEÇALHO DO CONFRONTO */
+    /* HERO HEADER DO CONFRONTO */
     .match-header {
       display: grid;
-      grid-template-columns: 1.2fr 1.1fr 1.2fr;
-      gap: 16px;
-      padding: 20px 24px;
-      background: radial-gradient(circle at top center, #1b263b 0%, #0d1320 75%);
-      border-bottom: 1px solid var(--border-light);
+      grid-template-columns: 1.25fr 1fr 1.2fr;
+      gap: 20px;
+      padding: 24px 28px;
+      background:
+        linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+        linear-gradient(225deg, rgba(6, 182, 212, 0.08) 0%, transparent 45%),
+        #0a0f1c;
+      border-bottom: 1px solid var(--border-strong);
       align-items: center;
     }
 
@@ -158,52 +193,55 @@
       display: flex;
       align-items: center;
       justify-content: space-around;
-      gap: 16px;
+      gap: 14px;
     }
 
     .team-card {
       text-align: center;
+      flex: 1;
     }
 
     .crest {
-      width: 62px;
-      height: 62px;
-      border-radius: 14px;
-      margin: 0 auto 8px;
+      width: 68px;
+      height: 68px;
+      border-radius: 18px;
+      margin: 0 auto 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 1.25rem;
+      font-size: 1.35rem;
       letter-spacing: 1px;
-      border: 2px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
     }
 
     .team-name {
       font-weight: 800;
-      font-size: 0.95rem;
+      font-size: 0.98rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
 
     .form-label {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       color: var(--text-muted);
-      margin-top: 2px;
+      margin-top: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .form-badges {
       display: flex;
       justify-content: center;
       gap: 4px;
-      margin-top: 4px;
+      margin-top: 5px;
     }
 
     .badge-form {
-      width: 19px;
-      height: 19px;
-      border-radius: 4px;
+      width: 21px;
+      height: 21px;
+      border-radius: 6px;
       font-size: 0.72rem;
       font-weight: 800;
       display: inline-flex;
@@ -211,81 +249,104 @@
       justify-content: center;
     }
 
-    .form-V { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #059669; }
-    .form-E { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid #ca8a04; }
-    .form-D { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #dc2626; }
+    .form-V { background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.5); }
+    .form-E { background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.5); }
+    .form-D { background: rgba(244, 63, 94, 0.18); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.5); }
+
+    .vs-pill {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-strong);
+      color: var(--text-secondary);
+      font-weight: 900;
+      font-size: 0.85rem;
+      padding: 6px 11px;
+      border-radius: 999px;
+    }
 
     .stadium-box {
       text-align: center;
-      border-left: 1px solid var(--border);
-      border-right: 1px solid var(--border);
-      padding: 0 14px;
+      border-left: 1px solid var(--border-subtle);
+      border-right: 1px solid var(--border-subtle);
+      padding: 0 18px;
     }
 
-    .league-title {
+    .league-pill {
+      display: inline-block;
+      background: var(--cyan-glow);
+      border: 1px solid rgba(6, 182, 212, 0.4);
+      color: #22d3ee;
       font-weight: 800;
-      font-size: 0.95rem;
-      color: var(--accent-gold);
+      font-size: 0.75rem;
+      padding: 4px 12px;
+      border-radius: 999px;
       text-transform: uppercase;
+      letter-spacing: 0.8px;
     }
 
     .match-datetime {
-      font-size: 0.82rem;
-      color: var(--text-main);
-      margin: 3px 0 8px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 8px 0 10px;
     }
 
     .stadium-banner {
-      background: linear-gradient(135deg, #1e293b, #0f172a);
-      border: 1px solid var(--border-light);
-      border-radius: 10px;
-      padding: 10px;
-      font-size: 0.8rem;
+      background: rgba(18, 27, 47, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 10px 12px;
     }
 
     .stadium-name {
       font-weight: 700;
+      font-size: 0.82rem;
       color: #e2e8f0;
     }
 
     .stadium-city {
       font-size: 0.74rem;
-      color: var(--text-muted);
+      color: var(--text-secondary);
+      margin-top: 2px;
     }
 
-    /* ÁRBITRO */
+    /* ÁRBITRO CARD */
     .referee-box {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      background: rgba(15, 23, 42, 0.65);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 14px;
+      gap: 14px;
+      background: rgba(18, 27, 47, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 12px 16px;
     }
 
     .ref-info h4 {
-      font-size: 0.72rem;
-      color: var(--text-muted);
+      font-size: 0.68rem;
+      color: var(--cyan);
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 1px;
+      font-weight: 800;
     }
 
     .ref-name {
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       font-weight: 800;
-      color: var(--text-main);
-      margin: 2px 0 6px;
+      color: var(--text-primary);
+      margin: 2px 0 7px;
     }
 
     .ref-stat {
-      font-size: 0.75rem;
-      color: #cbd5e1;
+      font-size: 0.76rem;
+      color: var(--text-secondary);
       margin-bottom: 3px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 7px;
+    }
+
+    .ref-stat strong {
+      color: var(--text-primary);
     }
 
     .card-icon {
@@ -295,90 +356,92 @@
       border-radius: 2px;
     }
 
-    .card-yellow { background: #facc15; }
-    .card-red { background: #ef4444; }
+    .card-yellow { background: #facc15; box-shadow: 0 0 6px rgba(250, 204, 21, 0.4); }
+    .card-red { background: #f43f5e; box-shadow: 0 0 6px rgba(244, 63, 94, 0.4); }
     .card-pen { background: #38bdf8; }
 
     .ref-avatar {
-      width: 58px;
-      height: 68px;
-      border-radius: 10px;
-      background: linear-gradient(180deg, #bef264 0%, #65a30d 100%);
-      color: #090d16;
+      width: 60px;
+      height: 70px;
+      border-radius: 12px;
+      background: linear-gradient(160deg, #34d399 0%, #059669 100%);
+      color: #03150e;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       font-weight: 900;
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       flex-shrink: 0;
-      border: 1px solid rgba(255,255,255,0.2);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.25);
     }
 
     .ref-avatar span {
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       text-transform: uppercase;
       font-weight: 800;
+      margin-top: 2px;
     }
 
-    /* DIVISOR CENTRAL */
+    /* SECTION DIVIDERS */
     .section-divider {
-      background: #141c2e;
+      background: linear-gradient(90deg, #0c1220, #131d33, #0c1220);
       text-align: center;
-      padding: 7px;
-      font-size: 0.78rem;
+      padding: 9px 16px;
+      font-size: 0.76rem;
       font-weight: 800;
-      letter-spacing: 2px;
-      color: var(--text-muted);
-      border-bottom: 1px solid var(--border);
+      letter-spacing: 2.2px;
+      color: var(--cyan);
+      border-bottom: 1px solid var(--border-subtle);
       text-transform: uppercase;
     }
 
-    /* ESTATÍSTICAS DAS EQUIPES (CASA VS FORA) */
+    /* COMPARATIVO DE EQUIPES (18 MÉTRICAS) */
     .team-stats-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      border-bottom: 1px solid var(--border-light);
+      border-bottom: 1px solid var(--border-strong);
     }
 
     .team-stats-col {
-      padding: 14px 18px;
+      padding: 16px 20px;
     }
 
     .team-stats-col:first-child {
-      border-right: 1px solid var(--border-light);
+      border-right: 1px solid var(--border-subtle);
     }
 
     .col-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 8px;
-      margin-bottom: 6px;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.78rem;
+      padding-bottom: 10px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--border-strong);
     }
 
     .col-header-left strong {
       display: block;
-      color: var(--text-main);
+      color: var(--text-primary);
       font-size: 0.82rem;
+      letter-spacing: 0.3px;
     }
 
     .col-header-left span {
-      color: var(--text-muted);
-      font-size: 0.72rem;
+      color: var(--text-secondary);
+      font-size: 0.73rem;
     }
 
     .col-header-mid {
       text-align: center;
       font-weight: 800;
-      font-size: 0.82rem;
+      font-size: 0.84rem;
+      color: var(--emerald);
     }
 
     .col-header-mid small {
       display: block;
-      font-weight: 400;
+      font-weight: 500;
       color: var(--text-muted);
       font-size: 0.68rem;
     }
@@ -386,61 +449,71 @@
     .col-header-right {
       text-align: right;
       font-weight: 700;
-      color: var(--text-muted);
-      font-size: 0.74rem;
+      color: var(--text-secondary);
+      font-size: 0.72rem;
     }
 
     .stat-row {
       display: grid;
-      grid-template-columns: 1.4fr 1.2fr 0.45fr;
+      grid-template-columns: 1.45fr 1.2fr 0.45fr;
       align-items: center;
-      padding: 5px 8px;
-      border-radius: 6px;
+      padding: 6px 10px;
+      border-radius: 8px;
       font-size: 0.81rem;
       font-variant-numeric: tabular-nums;
+      transition: background 0.15s;
     }
 
     .stat-row:nth-child(even) {
       background: var(--bg-row-alt);
     }
 
-    .stat-row.highlight {
-      background: var(--accent-gold-bg);
+    .stat-row:hover {
+      background: rgba(255, 255, 255, 0.05);
     }
 
-    .stat-row.highlight .stat-name,
-    .stat-row.highlight .stat-seq,
+    .stat-row.highlight {
+      background: var(--emerald-glow);
+      border-left: 3px solid var(--emerald);
+    }
+
+    .stat-row.highlight .stat-name {
+      color: #ecfdf5;
+      font-weight: 600;
+    }
+
     .stat-row.highlight .stat-avg {
-      color: var(--accent-gold);
-      font-weight: 700;
+      color: #34d399;
+      font-weight: 800;
     }
 
     .stat-row.dimmed {
-      opacity: 0.28;
+      opacity: 0.24;
     }
 
     .stat-name {
-      color: #d1d5db;
+      color: var(--text-secondary);
     }
 
     .stat-seq {
       text-align: center;
-      letter-spacing: 1px;
-      color: #e5e7eb;
-      font-family: 'Consolas', 'Courier New', monospace;
-      font-size: 0.8rem;
+      letter-spacing: 0.8px;
+      color: #cbd5e1;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.77rem;
     }
 
     .stat-avg {
       text-align: right;
       font-weight: 700;
-      color: #f9fafb;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    /* MATRIZ DE SCOUTING DE JOGADORES */
+    /* MATRIZ COMPLETA DE SCOUTING DE JOGADORES */
     .scouting-section {
-      padding: 18px 20px 24px;
-      background: #0b101b;
+      padding: 22px 24px 28px;
+      background: #080d18;
     }
 
     .scouting-toolbar {
@@ -448,29 +521,58 @@
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 14px;
+      gap: 14px;
+      margin-bottom: 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 12px 16px;
+      border-radius: 14px;
     }
 
-    .scouting-title {
-      font-size: 0.92rem;
+    .scouting-title-group h3 {
+      font-size: 0.96rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
-      color: var(--text-main);
+      letter-spacing: 0.6px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .scouting-title span {
-      color: var(--accent-gold);
-      font-size: 0.78rem;
-      font-weight: 600;
-      margin-left: 6px;
+    .scouting-title-group p {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .scouting-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-input {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.81rem;
+      min-width: 210px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: var(--cyan);
     }
 
     .matrix-wrapper {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 18px;
     }
 
     .matrix-wrapper.single-col {
@@ -478,25 +580,57 @@
     }
 
     .team-matrix-card {
-      background: var(--bg-panel);
-      border: 1px solid var(--border-light);
-      border-radius: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
       overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
     }
 
     .matrix-team-banner {
-      padding: 10px 14px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      background: linear-gradient(90deg, rgba(18, 27, 47, 0.95), rgba(12, 18, 32, 0.95));
+      border-bottom: 1px solid var(--border-strong);
+    }
+
+    .matrix-team-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       font-weight: 800;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       text-transform: uppercase;
-      border-bottom: 1px solid var(--border-light);
+    }
+
+    .mini-crest {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.68rem;
+      font-weight: 900;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .squad-count-badge {
+      background: var(--cyan-glow);
+      color: #22d3ee;
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
     }
 
     .table-scroll {
       overflow-x: auto;
+      max-height: 680px;
+      overflow-y: auto;
     }
 
     table.scouting-matrix {
@@ -505,48 +639,64 @@
       font-variant-numeric: tabular-nums;
     }
 
-    table.scouting-matrix th {
-      background: #141c2e;
-      color: var(--text-muted);
+    table.scouting-matrix thead th {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: #131c31;
+      color: var(--text-secondary);
       font-size: 0.71rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      padding: 9px 6px;
-      border-bottom: 1px solid var(--border-light);
+      padding: 10px 6px;
+      border-bottom: 1px solid var(--border-strong);
       cursor: pointer;
       user-select: none;
       white-space: nowrap;
-      transition: color 0.15s;
+      transition: all 0.15s;
     }
 
-    table.scouting-matrix th:first-child {
+    table.scouting-matrix thead th:first-child {
       text-align: left;
-      padding-left: 12px;
+      padding-left: 14px;
       cursor: default;
+      position: sticky;
+      left: 0;
+      z-index: 6;
     }
 
-    table.scouting-matrix th:hover:not(:first-child) {
-      color: var(--accent-gold);
+    table.scouting-matrix thead th:hover:not(:first-child) {
+      color: var(--amber);
+      background: #18233d;
     }
 
-    table.scouting-matrix th.sorted-col {
-      color: var(--accent-gold);
-      background: rgba(245, 158, 11, 0.1);
+    table.scouting-matrix thead th.sorted-col {
+      color: #fbbf24;
+      background: rgba(245, 158, 11, 0.16);
     }
 
     table.scouting-matrix td {
       padding: 8px 6px;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--border-subtle);
       text-align: center;
       vertical-align: middle;
     }
 
+    table.scouting-matrix td:first-child {
+      position: sticky;
+      left: 0;
+      background: var(--bg-surface);
+      z-index: 2;
+      border-right: 1px solid var(--border-subtle);
+    }
+
     table.scouting-matrix tr:nth-child(even) td {
-      background: rgba(15, 22, 36, 0.65);
+      background: #0b101d;
     }
 
     table.scouting-matrix tr:hover td {
-      background: rgba(59, 130, 246, 0.08);
+      background: #141e33;
     }
 
     .player-cell {
@@ -554,62 +704,79 @@
       align-items: center;
       gap: 9px;
       text-align: left;
-      padding-left: 6px;
-      min-width: 145px;
+      padding-left: 8px;
+      min-width: 162px;
     }
 
     .player-avatar {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
+      width: 31px;
+      height: 31px;
+      border-radius: 9px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       flex-shrink: 0;
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.22);
     }
 
     .player-meta strong {
       display: block;
       font-size: 0.8rem;
-      color: var(--text-main);
-      line-height: 1.15;
+      color: var(--text-primary);
+      line-height: 1.2;
     }
 
-    .player-meta span {
-      font-size: 0.68rem;
+    .player-meta-sub {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 2px;
+    }
+
+    .pos-tag {
+      font-size: 0.63rem;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      background: rgba(148, 163, 184, 0.14);
+      color: var(--text-secondary);
+    }
+
+    .role-tag {
+      font-size: 0.64rem;
       color: var(--text-muted);
     }
 
     .metric-cell {
-      border-radius: 6px;
-      padding: 3px 4px;
+      border-radius: 7px;
+      padding: 4px 5px;
     }
 
     .metric-cell.top-leader {
-      background: var(--accent-gold-bg);
-      border: 1px solid rgba(245, 158, 11, 0.35);
+      background: var(--amber-glow);
+      border: 1px solid rgba(245, 158, 11, 0.42);
     }
 
     .metric-avg {
+      font-family: 'JetBrains Mono', monospace;
       font-weight: 800;
-      font-size: 0.85rem;
-      color: #f9fafb;
+      font-size: 0.84rem;
+      color: var(--text-primary);
       line-height: 1.1;
     }
 
     .metric-cell.top-leader .metric-avg {
-      color: var(--accent-gold);
+      color: #fbbf24;
     }
 
     .metric-seq {
-      font-family: 'Consolas', monospace;
-      font-size: 0.67rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
       color: var(--text-muted);
       margin-top: 2px;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
     }
 
     /* MODAL ADICIONAR JOGO */
@@ -617,7 +784,8 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(2, 6, 15, 0.82);
+      backdrop-filter: blur(6px);
       align-items: center;
       justify-content: center;
       z-index: 1000;
@@ -629,24 +797,26 @@
     }
 
     .modal-box {
-      background: var(--bg-panel);
-      border: 1px solid var(--border-light);
-      border-radius: 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: 16px;
       max-width: 520px;
       width: 100%;
-      padding: 20px;
+      padding: 22px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
     }
 
     .modal-box h3 {
-      margin-bottom: 12px;
-      color: var(--accent-gold);
+      margin-bottom: 14px;
+      color: var(--emerald);
+      font-size: 1.05rem;
     }
 
     .form-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 14px;
+      gap: 11px;
+      margin-bottom: 16px;
     }
 
     .form-group {
@@ -660,17 +830,23 @@
     }
 
     .form-group label {
-      font-size: 0.76rem;
-      color: var(--text-muted);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      font-weight: 600;
     }
 
     .form-group input {
-      background: var(--bg-card);
-      border: 1px solid var(--border-light);
-      color: var(--text-main);
-      padding: 8px 10px;
-      border-radius: 7px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 9px 11px;
+      border-radius: 8px;
       font-size: 0.84rem;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: var(--cyan);
     }
 
     .modal-actions {
@@ -679,16 +855,16 @@
       gap: 8px;
     }
 
-    @media (max-width: 980px) {
+    @media (max-width: 1040px) {
       .match-header {
         grid-template-columns: 1fr;
       }
       .stadium-box {
         border-left: none;
         border-right: none;
-        border-top: 1px solid var(--border);
-        border-bottom: 1px solid var(--border);
-        padding: 12px 0;
+        border-top: 1px solid var(--border-subtle);
+        border-bottom: 1px solid var(--border-subtle);
+        padding: 14px 0;
       }
       .team-stats-grid,
       .matrix-wrapper {
@@ -696,19 +872,22 @@
       }
       .team-stats-col:first-child {
         border-right: none;
-        border-bottom: 1px solid var(--border-light);
+        border-bottom: 1px solid var(--border-strong);
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- BARRA SUPERIOR DE JOGOS DO DIA -->
+    <!-- BARRA SUPERIOR DE NAVEGAÇÃO -->
     <div class="top-bar">
-      <div class="brand">📊 Arena dos Dados</div>
+      <div class="brand">
+        <span class="brand-dot"></span>
+        Arena dos Dados
+      </div>
       <div class="match-tabs" id="matchTabs"></div>
       <div class="actions-group">
-        <button class="btn" id="btnHighlightOnly" onclick="toggleHighlightFilter()">⭐ Só Destaques</button>
+        <button class="btn" id="btnHighlightOnly" onclick="toggleHighlightFilter()">⚡ Só Vantagens</button>
         <button class="btn" onclick="copyTelegramSummary()">📋 Copiar Resumo</button>
         <button class="btn btn-primary" onclick="openModal()">+ Adicionar Jogo</button>
       </div>
@@ -794,7 +973,7 @@
         id: "fla-rbb",
         tabLabel: "Flamengo x Bragantino",
         league: "BRASILEIRÃO SÉRIE A",
-        roundDate: "Rodada 28 - 20/09/2026 - 18:30",
+        roundDate: "Rodada 28 • 20/09/2026 • 18:30",
         stadium: "ESTÁDIO MARACANÃ",
         city: "Rio de Janeiro, Brasil",
         referee: {
@@ -807,7 +986,7 @@
         home: {
           name: "FLAMENGO",
           abbr: "FLA",
-          bg: "linear-gradient(135deg, #dc2626 50%, #111827 50%)",
+          bg: "linear-gradient(135deg, #dc2626 50%, #090d16 50%)",
           color: "#ffffff",
           form: ["E", "V", "V", "V", "V"],
           stats: [
@@ -831,20 +1010,28 @@
             [3, 0, 2, 4, 2]
           ],
           players: [
-            { name: "Pedro", pos: "ATA", fin: [2,1,1,4,1], sot: [1,1,0,3,1], tac: [0,1,0,0,1], fc: [1,2,1,0,1], fs: [2,1,2,3,1] },
-            { name: "Bruno Henrique", pos: "ATA", fin: [2,4,0,1,1], sot: [1,2,0,1,0], tac: [1,0,2,1,1], fc: [2,1,1,2,1], fs: [1,1,2,1,0] },
-            { name: "De Arrascaeta", pos: "MEI", fin: [1,3,2,2,1], sot: [1,0,1,1,2], tac: [1,2,1,0,2], fc: [0,1,1,0,1], fs: [3,2,1,2,2] },
-            { name: "Gonzalo Plata", pos: "ATA", fin: [1,2,1,1,2], sot: [0,1,1,0,1], tac: [2,1,2,1,2], fc: [1,1,2,1,0], fs: [2,3,1,1,2] },
-            { name: "Jorginho", pos: "VOL", fin: [0,1,1,0,1], sot: [0,0,1,0,0], tac: [3,2,3,4,2], fc: [2,1,2,2,1], fs: [1,2,1,1,2] },
-            { name: "Gerson", pos: "MEI", fin: [1,2,2,1,1], sot: [0,1,1,1,0], tac: [2,3,1,2,3], fc: [1,2,1,1,2], fs: [2,2,3,1,2] },
-            { name: "Ayrton Lucas", pos: "LAT", fin: [1,2,0,1,1], sot: [0,1,0,0,1], tac: [2,2,3,2,1], fc: [1,1,0,2,1], fs: [1,1,2,0,1] }
+            { name: "Rossi", pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [1,0,1,0,1] },
+            { name: "Wesley", pos: "LAT", role: "Titular", fin: [1,2,1,1,2], sot: [0,1,0,1,1], tac: [3,2,4,3,2], fc: [2,1,1,2,1], fs: [1,2,1,2,1] },
+            { name: "Léo Ortiz", pos: "ZAG", role: "Titular", fin: [1,1,0,1,1], sot: [0,1,0,0,1], tac: [2,3,2,3,2], fc: [1,1,0,1,1], fs: [1,0,1,1,0] },
+            { name: "Léo Pereira", pos: "ZAG", role: "Titular", fin: [1,2,1,0,1], sot: [1,1,0,0,0], tac: [2,2,3,2,2], fc: [2,1,1,1,2], fs: [0,1,1,0,1] },
+            { name: "Ayrton Lucas", pos: "LAT", role: "Titular", fin: [1,2,0,1,1], sot: [0,1,0,0,1], tac: [2,2,3,2,1], fc: [1,1,0,2,1], fs: [1,1,2,0,1] },
+            { name: "Erick Pulgar", pos: "VOL", role: "Titular", fin: [1,1,0,1,1], sot: [0,0,0,1,0], tac: [4,3,3,4,3], fc: [2,3,2,2,2], fs: [1,1,1,2,1] },
+            { name: "Jorginho", pos: "VOL", role: "Titular", fin: [0,1,1,0,1], sot: [0,0,1,0,0], tac: [3,2,3,4,2], fc: [2,1,2,2,1], fs: [1,2,1,1,2] },
+            { name: "Gerson", pos: "MEI", role: "Titular", fin: [1,2,2,1,1], sot: [0,1,1,1,0], tac: [2,3,1,2,3], fc: [1,2,1,1,2], fs: [2,2,3,1,2] },
+            { name: "De Arrascaeta", pos: "MEI", role: "Titular", fin: [1,3,2,2,1], sot: [1,0,1,1,2], tac: [1,2,1,0,2], fc: [0,1,1,0,1], fs: [3,2,1,2,2] },
+            { name: "Gonzalo Plata", pos: "ATA", role: "Titular", fin: [1,2,1,1,2], sot: [0,1,1,0,1], tac: [2,1,2,1,2], fc: [1,1,2,1,0], fs: [2,3,1,1,2] },
+            { name: "Pedro", pos: "ATA", role: "Titular", fin: [2,1,1,4,1], sot: [1,1,0,3,1], tac: [0,1,0,0,1], fc: [1,2,1,0,1], fs: [2,1,2,3,1] },
+            { name: "Bruno Henrique", pos: "ATA", role: "Reserva", fin: [2,4,0,1,1], sot: [1,2,0,1,0], tac: [1,0,2,1,1], fc: [2,1,1,2,1], fs: [1,1,2,1,0] },
+            { name: "Luiz Araújo", pos: "ATA", role: "Reserva", fin: [2,3,1,2,2], sot: [1,1,0,1,1], tac: [1,1,1,0,1], fc: [1,1,0,1,1], fs: [1,2,1,1,2] },
+            { name: "De La Cruz", pos: "MEI", role: "Reserva", fin: [1,2,1,1,1], sot: [0,1,1,0,0], tac: [2,2,1,2,2], fc: [1,2,1,1,1], fs: [2,1,2,1,2] },
+            { name: "Alex Sandro", pos: "LAT", role: "Reserva", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [2,2,2,1,2], fc: [1,1,1,0,1], fs: [1,1,0,1,1] }
           ]
         },
         away: {
           name: "BRAGANTINO",
           abbr: "RBB",
           bg: "linear-gradient(135deg, #f8fafc 50%, #dc2626 50%)",
-          color: "#0f172a",
+          color: "#090d16",
           form: ["E", "D", "D", "V", "E"],
           stats: [
             [1, 1, 2, 1, 0],
@@ -867,13 +1054,21 @@
             [5, 6, 2, 6, 6]
           ],
           players: [
-            { name: "Lucas Barbosa", pos: "ATA", fin: [3,2,4,1,1], sot: [2,1,2,0,1], tac: [1,2,0,1,1], fc: [2,1,2,1,1], fs: [2,0,1,3,3] },
-            { name: "Fernando", pos: "ATA", fin: [3,2,0,2,1], sot: [1,1,0,1,1], tac: [0,1,1,0,1], fc: [1,2,1,1,0], fs: [1,2,1,1,2] },
-            { name: "Isidro Pitta", pos: "ATA", fin: [2,1,3,2,2], sot: [1,0,3,1,2], tac: [0,1,0,1,0], fc: [2,2,1,1,2], fs: [2,1,2,1,1] },
-            { name: "Agustín Sant'Anna", pos: "LAT", fin: [1,0,1,1,0], sot: [0,0,1,0,0], tac: [1,9,2,2,4], fc: [1,2,1,1,2], fs: [1,1,0,2,1] },
-            { name: "Alix Vinicius", pos: "ZAG", fin: [1,0,1,0,1], sot: [0,0,0,0,1], tac: [2,3,1,2,3], fc: [1,2,2,2,0], fs: [0,1,1,0,1] },
-            { name: "Jhon Jhon", pos: "MEI", fin: [2,1,2,2,1], sot: [1,1,1,1,0], tac: [2,1,1,2,2], fc: [1,2,1,0,1], fs: [2,2,3,2,1] },
-            { name: "Matheus Fernandes", pos: "VOL", fin: [1,1,0,1,1], sot: [0,0,0,1,0], tac: [3,4,2,3,3], fc: [2,3,2,1,2], fs: [1,0,1,1,1] }
+            { name: "Cleiton", pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [0,1,0,1,0] },
+            { name: "Agustín Sant'Anna", pos: "LAT", role: "Titular", fin: [1,0,1,1,0], sot: [0,0,1,0,0], tac: [1,9,2,2,4], fc: [1,2,1,1,2], fs: [1,1,0,2,1] },
+            { name: "Pedro Henrique", pos: "ZAG", role: "Titular", fin: [1,0,1,1,0], sot: [0,0,0,1,0], tac: [2,3,1,2,3], fc: [1,2,2,1,1], fs: [1,0,1,0,1] },
+            { name: "Alix Vinicius", pos: "ZAG", role: "Titular", fin: [1,0,1,0,1], sot: [0,0,0,0,1], tac: [2,3,1,2,3], fc: [1,2,2,2,0], fs: [0,1,1,0,1] },
+            { name: "Juninho Capixaba", pos: "LAT", role: "Titular", fin: [2,1,2,1,2], sot: [1,0,1,0,1], tac: [3,2,2,3,2], fc: [1,2,1,1,2], fs: [2,2,1,2,1] },
+            { name: "Matheus Fernandes", pos: "VOL", role: "Titular", fin: [1,1,0,1,1], sot: [0,0,0,1,0], tac: [3,4,2,3,3], fc: [2,3,2,1,2], fs: [1,0,1,1,1] },
+            { name: "Lucas Evangelista", pos: "VOL", role: "Titular", fin: [2,1,2,1,1], sot: [1,0,1,1,0], tac: [2,3,1,2,2], fc: [1,1,2,1,1], fs: [2,1,2,2,1] },
+            { name: "Jhon Jhon", pos: "MEI", role: "Titular", fin: [2,1,2,2,1], sot: [1,1,1,1,0], tac: [2,1,1,2,2], fc: [1,2,1,0,1], fs: [2,2,3,2,1] },
+            { name: "Lucas Barbosa", pos: "ATA", role: "Titular", fin: [3,2,4,1,1], sot: [2,1,2,0,1], tac: [1,2,0,1,1], fc: [2,1,2,1,1], fs: [2,0,1,3,3] },
+            { name: "Fernando", pos: "ATA", role: "Titular", fin: [3,2,0,2,1], sot: [1,1,0,1,1], tac: [0,1,1,0,1], fc: [1,2,1,1,0], fs: [1,2,1,1,2] },
+            { name: "Isidro Pitta", pos: "ATA", role: "Titular", fin: [2,1,3,2,2], sot: [1,0,3,1,2], tac: [0,1,0,1,0], fc: [2,2,1,1,2], fs: [2,1,2,1,1] },
+            { name: "Eduardo Sasha", pos: "ATA", role: "Reserva", fin: [2,1,2,1,1], sot: [1,0,1,1,0], tac: [1,0,1,0,1], fc: [1,1,0,1,1], fs: [1,1,2,1,1] },
+            { name: "Vinicinho", pos: "ATA", role: "Reserva", fin: [1,2,1,2,1], sot: [1,1,0,1,0], tac: [1,1,0,1,1], fc: [1,1,1,0,1], fs: [2,1,1,2,1] },
+            { name: "Eric Ramires", pos: "MEI", role: "Reserva", fin: [1,0,1,1,1], sot: [0,0,1,0,0], tac: [2,2,1,2,1], fc: [1,1,1,1,0], fs: [1,1,1,0,1] },
+            { name: "Hurtado", pos: "LAT", role: "Reserva", fin: [0,1,0,0,1], sot: [0,0,0,0,0], tac: [2,1,1,2,2], fc: [1,1,0,1,1], fs: [1,0,1,1,0] }
           ]
         }
       },
@@ -881,7 +1076,7 @@
         id: "pal-bot",
         tabLabel: "Palmeiras x Botafogo",
         league: "BRASILEIRÃO SÉRIE A",
-        roundDate: "Rodada 28 - 20/09/2026 - 21:30",
+        roundDate: "Rodada 28 • 20/09/2026 • 21:30",
         stadium: "ALLIANZ PARQUE",
         city: "São Paulo, Brasil",
         referee: {
@@ -918,12 +1113,20 @@
             [3, 1, 3, 2, 2]
           ],
           players: [
-            { name: "Estêvão", pos: "ATA", fin: [4,3,2,4,3], sot: [2,2,1,2,2], tac: [1,2,1,1,2], fc: [1,0,1,1,1], fs: [4,3,5,3,4] },
-            { name: "Flaco López", pos: "ATA", fin: [3,4,2,3,3], sot: [2,2,1,1,2], tac: [0,1,0,1,0], fc: [2,1,2,1,2], fs: [1,2,1,2,1] },
-            { name: "Raphael Veiga", pos: "MEI", fin: [2,3,2,2,3], sot: [1,2,1,1,1], tac: [1,1,2,1,1], fc: [1,1,0,1,1], fs: [2,2,1,2,2] },
-            { name: "Aníbal Moreno", pos: "VOL", fin: [1,1,0,1,1], sot: [0,1,0,0,0], tac: [4,5,3,4,4], fc: [2,3,2,2,3], fs: [1,1,2,1,1] },
-            { name: "Richard Ríos", pos: "VOL", fin: [2,2,1,2,1], sot: [1,1,0,1,1], tac: [3,2,3,3,2], fc: [2,2,3,1,2], fs: [2,3,2,2,3] },
-            { name: "Piquerez", pos: "LAT", fin: [1,2,1,1,2], sot: [0,1,0,1,1], tac: [2,3,2,2,3], fc: [1,1,2,1,1], fs: [1,1,1,2,1] }
+            { name: "Weverton", pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [1,0,0,1,0] },
+            { name: "Marcos Rocha", pos: "LAT", role: "Titular", fin: [1,0,1,1,0], sot: [0,0,0,1,0], tac: [3,3,2,3,2], fc: [1,2,1,1,1], fs: [1,1,2,1,1] },
+            { name: "Gustavo Gómez", pos: "ZAG", role: "Titular", fin: [1,2,1,1,2], sot: [1,1,0,1,1], tac: [2,3,2,3,2], fc: [2,1,2,1,2], fs: [1,1,0,1,1] },
+            { name: "Murilo", pos: "ZAG", role: "Titular", fin: [1,1,1,2,1], sot: [0,1,1,1,0], tac: [2,2,3,2,2], fc: [1,1,2,1,1], fs: [0,1,1,1,0] },
+            { name: "Piquerez", pos: "LAT", role: "Titular", fin: [1,2,1,1,2], sot: [0,1,0,1,1], tac: [2,3,2,2,3], fc: [1,1,2,1,1], fs: [1,1,1,2,1] },
+            { name: "Aníbal Moreno", pos: "VOL", role: "Titular", fin: [1,1,0,1,1], sot: [0,1,0,0,0], tac: [4,5,3,4,4], fc: [2,3,2,2,3], fs: [1,1,2,1,1] },
+            { name: "Richard Ríos", pos: "VOL", role: "Titular", fin: [2,2,1,2,1], sot: [1,1,0,1,1], tac: [3,2,3,3,2], fc: [2,2,3,1,2], fs: [2,3,2,2,3] },
+            { name: "Raphael Veiga", pos: "MEI", role: "Titular", fin: [2,3,2,2,3], sot: [1,2,1,1,1], tac: [1,1,2,1,1], fc: [1,1,0,1,1], fs: [2,2,1,2,2] },
+            { name: "Estêvão", pos: "ATA", role: "Titular", fin: [4,3,2,4,3], sot: [2,2,1,2,2], tac: [1,2,1,1,2], fc: [1,0,1,1,1], fs: [4,3,5,3,4] },
+            { name: "Felipe Anderson", pos: "ATA", role: "Titular", fin: [2,2,1,2,2], sot: [1,1,0,1,1], tac: [2,1,2,2,1], fc: [1,1,1,0,1], fs: [2,2,2,1,2] },
+            { name: "Flaco López", pos: "ATA", role: "Titular", fin: [3,4,2,3,3], sot: [2,2,1,1,2], tac: [0,1,0,1,0], fc: [2,1,2,1,2], fs: [1,2,1,2,1] },
+            { name: "Maurício", pos: "MEI", role: "Reserva", fin: [2,2,1,1,2], sot: [1,1,0,1,1], tac: [1,1,1,0,1], fc: [1,0,1,1,0], fs: [1,2,1,1,1] },
+            { name: "Rony", pos: "ATA", role: "Reserva", fin: [2,3,1,2,1], sot: [1,1,1,0,1], tac: [1,0,1,1,0], fc: [1,1,1,1,1], fs: [1,1,0,1,1] },
+            { name: "Zé Rafael", pos: "VOL", role: "Reserva", fin: [1,1,0,1,0], sot: [0,0,0,0,0], tac: [2,2,2,1,2], fc: [1,2,1,1,1], fs: [2,1,2,1,2] }
           ]
         },
         away: {
@@ -953,12 +1156,20 @@
             [3, 4, 3, 4, 3]
           ],
           players: [
-            { name: "Igor Jesus", pos: "ATA", fin: [3,2,4,2,3], sot: [2,1,2,1,2], tac: [1,1,0,1,1], fc: [2,2,1,2,1], fs: [3,2,3,2,3] },
-            { name: "Luiz Henrique", pos: "ATA", fin: [3,3,2,2,4], sot: [1,2,1,1,2], tac: [1,0,2,1,1], fc: [1,2,1,1,1], fs: [3,4,2,3,3] },
-            { name: "Savarino", pos: "MEI", fin: [2,2,3,1,2], sot: [1,1,2,0,1], tac: [1,2,1,1,2], fc: [0,1,1,1,0], fs: [2,1,2,2,2] },
-            { name: "Marlon Freitas", pos: "VOL", fin: [1,1,1,0,1], sot: [0,0,1,0,0], tac: [3,3,4,3,3], fc: [2,2,1,2,2], fs: [1,2,1,1,2] },
-            { name: "Gregore", pos: "VOL", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [4,5,4,3,4], fc: [3,3,2,3,2], fs: [1,1,2,1,1] },
-            { name: "Alex Telles", pos: "LAT", fin: [1,1,2,1,1], sot: [0,1,1,0,1], tac: [2,2,3,2,2], fc: [1,2,1,1,1], fs: [1,1,1,2,1] }
+            { name: "John", pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [1,0,1,0,0] },
+            { name: "Vitinho", pos: "LAT", role: "Titular", fin: [1,0,1,1,1], sot: [0,0,1,0,0], tac: [3,2,3,3,2], fc: [1,2,1,1,2], fs: [1,1,1,2,1] },
+            { name: "Bastos", pos: "ZAG", role: "Titular", fin: [1,1,0,1,1], sot: [0,1,0,0,1], tac: [3,2,3,2,3], fc: [2,1,2,2,1], fs: [0,1,1,0,1] },
+            { name: "Barboza", pos: "ZAG", role: "Titular", fin: [1,0,1,1,1], sot: [1,0,0,1,0], tac: [2,3,3,2,2], fc: [2,3,2,2,2], fs: [1,1,0,1,1] },
+            { name: "Alex Telles", pos: "LAT", role: "Titular", fin: [1,1,2,1,1], sot: [0,1,1,0,1], tac: [2,2,3,2,2], fc: [1,2,1,1,1], fs: [1,1,1,2,1] },
+            { name: "Gregore", pos: "VOL", role: "Titular", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [4,5,4,3,4], fc: [3,3,2,3,2], fs: [1,1,2,1,1] },
+            { name: "Marlon Freitas", pos: "VOL", role: "Titular", fin: [1,1,1,0,1], sot: [0,0,1,0,0], tac: [3,3,4,3,3], fc: [2,2,1,2,2], fs: [1,2,1,1,2] },
+            { name: "Thiago Almada", pos: "MEI", role: "Titular", fin: [2,3,2,2,3], sot: [1,2,1,1,2], tac: [1,2,1,1,2], fc: [1,1,0,1,1], fs: [3,3,4,2,3] },
+            { name: "Luiz Henrique", pos: "ATA", role: "Titular", fin: [3,3,2,2,4], sot: [1,2,1,1,2], tac: [1,0,2,1,1], fc: [1,2,1,1,1], fs: [3,4,2,3,3] },
+            { name: "Savarino", pos: "ATA", role: "Titular", fin: [2,2,3,1,2], sot: [1,1,2,0,1], tac: [1,2,1,1,2], fc: [0,1,1,1,0], fs: [2,1,2,2,2] },
+            { name: "Igor Jesus", pos: "ATA", role: "Titular", fin: [3,2,4,2,3], sot: [2,1,2,1,2], tac: [1,1,0,1,1], fc: [2,2,1,2,1], fs: [3,2,3,2,3] },
+            { name: "Matheus Martins", pos: "ATA", role: "Reserva", fin: [2,1,2,1,2], sot: [1,0,1,1,1], tac: [1,1,0,1,0], fc: [1,1,1,0,1], fs: [2,1,1,2,1] },
+            { name: "Tiquinho Soares", pos: "ATA", role: "Reserva", fin: [2,2,1,2,1], sot: [1,1,0,1,1], tac: [0,0,1,0,0], fc: [1,2,1,1,1], fs: [1,1,2,1,1] },
+            { name: "Danilo Barbosa", pos: "VOL", role: "Reserva", fin: [1,0,1,0,1], sot: [0,0,0,0,0], tac: [2,3,2,2,2], fc: [2,1,2,1,2], fs: [1,0,1,1,0] }
           ]
         }
       },
@@ -966,7 +1177,7 @@
         id: "rma-fcb",
         tabLabel: "Real Madrid x Barcelona",
         league: "LA LIGA",
-        roundDate: "Rodada 14 - 23/11/2026 - 17:00",
+        roundDate: "Rodada 14 • 23/11/2026 • 17:00",
         stadium: "SANTIAGO BERNABÉU",
         city: "Madri, Espanha",
         referee: {
@@ -1003,11 +1214,20 @@
             [3, 3, 3, 4, 2]
           ],
           players: [
-            { name: "Vinícius Júnior", pos: "ATA", fin: [4,5,4,3,5], sot: [2,3,2,1,3], tac: [1,0,1,1,1], fc: [2,1,2,2,1], fs: [4,5,4,3,4] },
-            { name: "Kylian Mbappé", pos: "ATA", fin: [5,4,6,3,5], sot: [3,2,4,2,3], tac: [0,1,0,0,1], fc: [1,1,0,1,1], fs: [2,3,2,2,3] },
-            { name: "Jude Bellingham", pos: "MEI", fin: [3,2,3,2,3], sot: [2,1,2,1,1], tac: [3,2,3,3,2], fc: [2,2,1,2,2], fs: [3,2,3,2,3] },
-            { name: "Fede Valverde", pos: "MEI", fin: [2,3,2,2,2], sot: [1,1,1,1,1], tac: [3,3,2,4,3], fc: [1,1,1,2,1], fs: [1,2,1,1,1] },
-            { name: "Tchouaméni", pos: "VOL", fin: [1,1,0,1,1], sot: [0,0,0,0,1], tac: [4,3,4,3,4], fc: [2,3,2,2,2], fs: [1,1,2,1,1] }
+            { name: "Courtois", pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [0,1,0,0,1] },
+            { name: "Carvajal", pos: "LAT", role: "Titular", fin: [1,1,2,1,1], sot: [0,1,1,0,0], tac: [3,3,2,3,3], fc: [2,1,2,2,1], fs: [2,1,2,1,2] },
+            { name: "Éder Militão", pos: "ZAG", role: "Titular", fin: [1,1,1,0,1], sot: [0,1,0,0,1], tac: [2,3,2,2,3], fc: [1,1,2,1,1], fs: [1,0,1,1,0] },
+            { name: "Rüdiger", pos: "ZAG", role: "Titular", fin: [1,2,1,1,1], sot: [1,1,0,0,1], tac: [2,2,3,2,2], fc: [1,2,1,2,1], fs: [1,1,0,1,1] },
+            { name: "Ferland Mendy", pos: "LAT", role: "Titular", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [3,2,3,3,2], fc: [1,1,2,1,1], fs: [1,1,1,2,1] },
+            { name: "Tchouaméni", pos: "VOL", role: "Titular", fin: [1,1,0,1,1], sot: [0,0,0,0,1], tac: [4,3,4,3,4], fc: [2,3,2,2,2], fs: [1,1,2,1,1] },
+            { name: "Fede Valverde", pos: "MEI", role: "Titular", fin: [2,3,2,2,2], sot: [1,1,1,1,1], tac: [3,3,2,4,3], fc: [1,1,1,2,1], fs: [1,2,1,1,1] },
+            { name: "Jude Bellingham", pos: "MEI", role: "Titular", fin: [3,2,3,2,3], sot: [2,1,2,1,1], tac: [3,2,3,3,2], fc: [2,2,1,2,2], fs: [3,2,3,2,3] },
+            { name: "Rodrygo", pos: "ATA", role: "Titular", fin: [3,2,3,2,3], sot: [1,1,2,1,2], tac: [1,1,0,1,1], fc: [1,0,1,1,0], fs: [2,2,3,2,2] },
+            { name: "Vinícius Júnior", pos: "ATA", role: "Titular", fin: [4,5,4,3,5], sot: [2,3,2,1,3], tac: [1,0,1,1,1], fc: [2,1,2,2,1], fs: [4,5,4,3,4] },
+            { name: "Kylian Mbappé", pos: "ATA", role: "Titular", fin: [5,4,6,3,5], sot: [3,2,4,2,3], tac: [0,1,0,0,1], fc: [1,1,0,1,1], fs: [2,3,2,2,3] },
+            { name: "Camavinga", pos: "VOL", role: "Reserva", fin: [1,1,1,0,1], sot: [0,0,1,0,0], tac: [3,4,3,2,3], fc: [2,2,1,2,1], fs: [2,1,2,2,1] },
+            { name: "Brahim Díaz", pos: "MEI", role: "Reserva", fin: [2,2,1,2,1], sot: [1,1,0,1,1], tac: [1,1,1,0,1], fc: [1,0,1,1,0], fs: [2,2,1,2,1] },
+            { name: "Endrick", pos: "ATA", role: "Reserva", fin: [2,3,2,1,2], sot: [1,2,1,1,1], tac: [0,0,1,0,0], fc: [1,1,1,0,1], fs: [1,1,1,1,1] }
           ]
         },
         away: {
@@ -1037,11 +1257,20 @@
             [2, 3, 3, 3, 3]
           ],
           players: [
-            { name: "Lamine Yamal", pos: "ATA", fin: [4,4,3,4,3], sot: [2,2,2,2,1], tac: [1,2,1,1,1], fc: [1,0,1,1,1], fs: [3,4,3,3,4] },
-            { name: "Raphinha", pos: "ATA", fin: [3,5,3,4,2], sot: [2,3,1,2,1], tac: [2,2,1,2,2], fc: [1,2,1,1,2], fs: [2,2,3,2,2] },
-            { name: "Lewandowski", pos: "ATA", fin: [4,4,3,3,3], sot: [2,3,2,2,1], tac: [0,0,1,0,0], fc: [1,1,2,1,1], fs: [2,1,2,2,1] },
-            { name: "Pedri", pos: "MEI", fin: [1,2,1,1,1], sot: [1,1,0,1,0], tac: [2,3,2,2,3], fc: [1,1,0,1,1], fs: [3,2,3,3,2] },
-            { name: "Marc Casadó", pos: "VOL", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [4,4,5,3,4], fc: [2,2,3,2,3], fs: [1,2,1,1,2] }
+            { name: "Iñaki Peña", pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [0,0,1,0,0] },
+            { name: "Koundé", pos: "LAT", role: "Titular", fin: [1,1,1,2,1], sot: [0,1,0,1,0], tac: [3,3,2,3,2], fc: [1,1,2,1,1], fs: [1,1,1,1,2] },
+            { name: "Pau Cubarsí", pos: "ZAG", role: "Titular", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [2,3,2,2,3], fc: [1,1,1,1,2], fs: [1,0,1,1,0] },
+            { name: "Iñigo Martínez", pos: "ZAG", role: "Titular", fin: [1,1,1,0,1], sot: [0,1,0,0,0], tac: [2,2,3,2,2], fc: [2,1,2,1,2], fs: [1,1,0,1,1] },
+            { name: "Alejandro Balde", pos: "LAT", role: "Titular", fin: [1,2,1,1,1], sot: [0,1,0,0,1], tac: [2,2,2,3,2], fc: [1,1,1,1,2], fs: [2,2,1,2,1] },
+            { name: "Marc Casadó", pos: "VOL", role: "Titular", fin: [0,1,0,1,0], sot: [0,0,0,0,0], tac: [4,4,5,3,4], fc: [2,2,3,2,3], fs: [1,2,1,1,2] },
+            { name: "Pedri", pos: "MEI", role: "Titular", fin: [1,2,1,1,1], sot: [1,1,0,1,0], tac: [2,3,2,2,3], fc: [1,1,0,1,1], fs: [3,2,3,3,2] },
+            { name: "Dani Olmo", pos: "MEI", role: "Titular", fin: [3,3,2,3,2], sot: [2,2,1,2,1], tac: [1,1,2,1,1], fc: [1,1,1,1,1], fs: [2,3,2,2,2] },
+            { name: "Lamine Yamal", pos: "ATA", role: "Titular", fin: [4,4,3,4,3], sot: [2,2,2,2,1], tac: [1,2,1,1,1], fc: [1,0,1,1,1], fs: [3,4,3,3,4] },
+            { name: "Raphinha", pos: "ATA", role: "Titular", fin: [3,5,3,4,2], sot: [2,3,1,2,1], tac: [2,2,1,2,2], fc: [1,2,1,1,2], fs: [2,2,3,2,2] },
+            { name: "Lewandowski", pos: "ATA", role: "Titular", fin: [4,4,3,3,3], sot: [2,3,2,2,1], tac: [0,0,1,0,0], fc: [1,1,2,1,1], fs: [2,1,2,2,1] },
+            { name: "Gavi", pos: "MEI", role: "Reserva", fin: [1,1,1,1,0], sot: [0,1,0,0,0], tac: [3,3,2,3,3], fc: [2,3,2,2,2], fs: [2,2,2,1,2] },
+            { name: "Frenkie de Jong", pos: "VOL", role: "Reserva", fin: [1,1,0,1,1], sot: [0,0,0,1,0], tac: [2,2,2,1,2], fc: [1,1,1,1,1], fs: [2,1,2,2,1] },
+            { name: "Ferran Torres", pos: "ATA", role: "Reserva", fin: [2,2,1,2,1], sot: [1,1,1,1,0], tac: [1,0,1,0,1], fc: [1,1,0,1,1], fs: [1,1,1,1,1] }
           ]
         }
       }
@@ -1050,7 +1279,8 @@
     let activeMatchIndex = 0;
     let highlightOnly = false;
     let teamFilter = "all"; // "all" | "home" | "away"
-    let sortMetricKey = null; // null | "fin" | "sot" | "tac" | "fc" | "fs"
+    let sortMetricKey = null;
+    let playerSearch = "";
 
     function calcAvg(arr) {
       if (!arr || !arr.length) return 0;
@@ -1072,6 +1302,7 @@
     function selectMatch(idx) {
       activeMatchIndex = idx;
       sortMetricKey = null;
+      playerSearch = "";
       renderTabs();
       renderDashboard();
     }
@@ -1091,6 +1322,11 @@
     function toggleSortMetric(key) {
       sortMetricKey = sortMetricKey === key ? null : key;
       renderDashboard();
+    }
+
+    function handleSearchInput(val) {
+      playerSearch = val.toLowerCase();
+      renderDashboard(true);
     }
 
     function buildTeamStatsColumn(teamObj, opponentObj, venueLabel) {
@@ -1137,71 +1373,86 @@
     }
 
     function buildPlayerMatrixCard(teamObj) {
-      let playersList = [...teamObj.players];
+      const allPlayers = teamObj.players;
 
-      // Calcula líderes de cada coluna para destacar
+      // Calcula líderes de cada coluna considerando todo o elenco do time
       const maxByCol = {};
       PLAYER_COLS.forEach((col) => {
-        maxByCol[col.key] = Math.max(...playersList.map((p) => calcAvg(p[col.key])));
+        maxByCol[col.key] = Math.max(...allPlayers.map((p) => calcAvg(p[col.key])));
       });
 
+      let filteredPlayers = allPlayers.filter(
+        (p) =>
+          p.name.toLowerCase().includes(playerSearch) ||
+          p.pos.toLowerCase().includes(playerSearch) ||
+          (p.role && p.role.toLowerCase().includes(playerSearch))
+      );
+
       if (sortMetricKey) {
-        playersList.sort((a, b) => calcAvg(b[sortMetricKey]) - calcAvg(a[sortMetricKey]));
+        filteredPlayers.sort((a, b) => calcAvg(b[sortMetricKey]) - calcAvg(a[sortMetricKey]));
       }
 
       const headersHtml = PLAYER_COLS.map((col) => {
         const isSorted = sortMetricKey === col.key;
         return `
-          <th class="${isSorted ? "sorted-col" : ""}" onclick="toggleSortMetric('${col.key}')" title="Clique para ordenar por ${col.label}">
+          <th class="${isSorted ? "sorted-col" : ""}" onclick="toggleSortMetric('${col.key}')" title="Ordenar por ${col.label}">
             ${col.label} ${isSorted ? "▼" : ""}
           </th>
         `;
       }).join("");
 
-      const rowsHtml = playersList
-        .map((p) => {
-          const initials = p.name
-            .split(" ")
-            .map((n) => n[0])
-            .slice(0, 2)
-            .join("");
+      const rowsHtml = filteredPlayers.length
+        ? filteredPlayers
+            .map((p) => {
+              const initials = p.name
+                .split(" ")
+                .map((n) => n[0])
+                .slice(0, 2)
+                .join("");
 
-          const cellsHtml = PLAYER_COLS.map((col) => {
-            const arr = p[col.key];
-            const avg = calcAvg(arr);
-            const isLeader = avg > 0 && avg === maxByCol[col.key];
-            return `
-              <td>
-                <div class="metric-cell ${isLeader ? "top-leader" : ""}">
-                  <div class="metric-avg">${avg.toFixed(1)}</div>
-                  <div class="metric-seq">${arr.join("-")}</div>
-                </div>
-              </td>
-            `;
-          }).join("");
+              const cellsHtml = PLAYER_COLS.map((col) => {
+                const arr = p[col.key];
+                const avg = calcAvg(arr);
+                const isLeader = avg > 0 && avg === maxByCol[col.key];
+                return `
+                  <td>
+                    <div class="metric-cell ${isLeader ? "top-leader" : ""}">
+                      <div class="metric-avg">${avg.toFixed(1)}</div>
+                      <div class="metric-seq">${arr.join("-")}</div>
+                    </div>
+                  </td>
+                `;
+              }).join("");
 
-          return `
-            <tr>
-              <td>
-                <div class="player-cell">
-                  <div class="player-avatar" style="background:${teamObj.bg}; color:${teamObj.color};">${initials}</div>
-                  <div class="player-meta">
-                    <strong>${p.name}</strong>
-                    <span>${p.pos} • 5 jogos</span>
-                  </div>
-                </div>
-              </td>
-              ${cellsHtml}
-            </tr>
-          `;
-        })
-        .join("");
+              return `
+                <tr>
+                  <td>
+                    <div class="player-cell">
+                      <div class="player-avatar" style="background:${teamObj.bg}; color:${teamObj.color};">${initials}</div>
+                      <div class="player-meta">
+                        <strong>${p.name}</strong>
+                        <div class="player-meta-sub">
+                          <span class="pos-tag">${p.pos}</span>
+                          <span class="role-tag">${p.role || "Elenco"}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  ${cellsHtml}
+                </tr>
+              `;
+            })
+            .join("")
+        : `<tr><td colspan="6" style="padding:20px; color:var(--text-muted);">Nenhum jogador encontrado para "${playerSearch}".</td></tr>`;
 
       return `
         <div class="team-matrix-card">
           <div class="matrix-team-banner">
-            <span>${teamObj.name} — Elenco Principal</span>
-            <span style="font-size:0.72rem; color:var(--text-muted); font-weight:600;">Média / Seq. 90'</span>
+            <div class="matrix-team-title">
+              <span class="mini-crest" style="background:${teamObj.bg}; color:${teamObj.color};">${teamObj.abbr}</span>
+              ${teamObj.name}
+            </div>
+            <span class="squad-count-badge">${filteredPlayers.length} jogadores</span>
           </div>
           <div class="table-scroll">
             <table class="scouting-matrix">
@@ -1220,7 +1471,7 @@
       `;
     }
 
-    function renderDashboard() {
+    function renderDashboard(keepSearchFocus = false) {
       const m = MATCHES_DATA[activeMatchIndex];
       const refInitials = m.referee.name
         .split(" ")
@@ -1263,7 +1514,7 @@
               <div class="form-label">Últimos 5 Jogos</div>
               <div class="form-badges">${renderFormBadges(m.home.form)}</div>
             </div>
-            <div style="font-weight:900; color:var(--text-muted); font-size:1.1rem;">VS</div>
+            <div class="vs-pill">VS</div>
             <div class="team-card">
               <div class="crest" style="background:${m.away.bg}; color:${m.away.color};">${m.away.abbr}</div>
               <div class="team-name">${m.away.name}</div>
@@ -1273,7 +1524,7 @@
           </div>
 
           <div class="stadium-box">
-            <div class="league-title">${m.league}</div>
+            <span class="league-pill">${m.league}</span>
             <div class="match-datetime">${m.roundDate}</div>
             <div class="stadium-banner">
               <div class="stadium-name">🏟️ ${m.stadium}</div>
@@ -1283,9 +1534,9 @@
 
           <div class="referee-box">
             <div class="ref-info">
-              <h4>Árbitro</h4>
+              <h4>Arbitragem</h4>
               <div class="ref-name">${m.referee.name}</div>
-              <div class="ref-stat">📋 ${m.referee.matches}</div>
+              <div class="ref-stat">📋 <strong>${m.referee.matches}</strong></div>
               <div class="ref-stat"><span class="card-icon card-yellow"></span> ${m.referee.yellow}</div>
               <div class="ref-stat"><span class="card-icon card-red"></span> ${m.referee.red}</div>
               <div class="ref-stat"><span class="card-icon card-pen"></span> ${m.referee.pen}</div>
@@ -1297,7 +1548,7 @@
           </div>
         </div>
 
-        <div class="section-divider">Arena dos Dados — Comparativo 90'</div>
+        <div class="section-divider">Arena dos Dados — Comparativo 90 Minutos</div>
 
         <!-- ESTATÍSTICAS DAS EQUIPES -->
         <div class="team-stats-grid">
@@ -1305,22 +1556,38 @@
           ${buildTeamStatsColumn(m.away, m.home, "FORA")}
         </div>
 
-        <!-- MATRIZ DE SCOUTING DE JOGADORES -->
+        <!-- MATRIZ COMPLETA DE SCOUTING DE JOGADORES -->
         <div class="scouting-section">
           <div class="scouting-toolbar">
-            <div class="scouting-title">
-              Scouting de Jogadores (Matriz)
-              <span>Clique nas métricas para ordenar</span>
+            <div class="scouting-title-group">
+              <h3>Matriz Completa de Scouting — Elencos</h3>
+              <p>Todos os titulares e reservas relacionados • Clique nas colunas para ordenar por média</p>
             </div>
-            <div class="actions-group">
+            <div class="scouting-controls">
+              <input
+                type="text"
+                id="playerSearchInput"
+                class="search-input"
+                placeholder="🔍 Buscar jogador ou posição (ex: ATA)..."
+                value="${playerSearch}"
+                oninput="handleSearchInput(this.value)"
+              />
               <button class="btn ${teamFilter === "all" ? "active-filter" : ""}" onclick="setTeamFilter('all')">Todos</button>
-              <button class="btn ${teamFilter === "home" ? "active-filter" : ""}" onclick="setTeamFilter('home')">Só ${m.home.name}</button>
-              <button class="btn ${teamFilter === "away" ? "active-filter" : ""}" onclick="setTeamFilter('away')">Só ${m.away.name}</button>
+              <button class="btn ${teamFilter === "home" ? "active-filter" : ""}" onclick="setTeamFilter('home')">${m.home.name}</button>
+              <button class="btn ${teamFilter === "away" ? "active-filter" : ""}" onclick="setTeamFilter('away')">${m.away.name}</button>
             </div>
           </div>
           ${matricesHtml}
         </div>
       `;
+
+      if (keepSearchFocus) {
+        const input = document.getElementById("playerSearchInput");
+        if (input) {
+          input.focus();
+          input.setSelectionRange(input.value.length, input.value.length);
+        }
+      }
     }
 
     function copyTelegramSummary() {
@@ -1339,13 +1606,13 @@
         `• Escanteios: ${calcAvg(m.home.stats[7])} vs ${calcAvg(m.away.stats[7])}`,
         `• Faltas Cometidas: ${calcAvg(m.home.stats[11])} vs ${calcAvg(m.away.stats[11])}`,
         ``,
-        `🎯 DESTAQUES INDIVIDUAIS (FINALIZAÇÕES):`,
+        `🎯 LÍDERES EM FINALIZAÇÕES:`,
         `• ${topHomeFin.name} (${m.home.abbr}): Média ${calcAvg(topHomeFin.fin)} (${topHomeFin.fin.join("-")})`,
         `• ${topAwayFin.name} (${m.away.abbr}): Média ${calcAvg(topAwayFin.fin)} (${topAwayFin.fin.join("-")})`
       ].join("\n");
 
       navigator.clipboard.writeText(text).then(() => {
-        alert("Resumo copiado para a área de transferência! Pronto para colar no Telegram.");
+        alert("Resumo copiado! Pronto para colar no Telegram.");
       });
     }
 
@@ -1361,7 +1628,7 @@
       const homeName = document.getElementById("inHome").value.trim() || "MANDANTE";
       const awayName = document.getElementById("inAway").value.trim() || "VISITANTE";
       const league = document.getElementById("inLeague").value.trim() || "CAMPEONATO";
-      const roundDate = document.getElementById("inDate").value.trim() || "Hoje - 20:00";
+      const roundDate = document.getElementById("inDate").value.trim() || "Hoje • 20:00";
       const stadiumFull = document.getElementById("inStadium").value.trim() || "Estádio Principal — Brasil";
       const refName = document.getElementById("inRef").value.trim() || "Árbitro a Definir";
       const refCards = document.getElementById("inRefCards").value.trim() || "4.50 | 0.20";
@@ -1376,16 +1643,21 @@
           return Array.from({ length: 5 }, () => Math.max(0, base + Math.floor(Math.random() * 5) - 2));
         });
 
-      const genPlayers = (prefix) =>
-        ["Atacante 1", "Atacante 2", "Meia Armador", "Volante", "Lateral"].map((role, i) => ({
-          name: `${prefix} ${role}`,
-          pos: i < 2 ? "ATA" : i === 2 ? "MEI" : i === 3 ? "VOL" : "LAT",
-          fin: [2, 1, 3, 1, 2],
-          sot: [1, 0, 2, 1, 1],
-          tac: [1, 2, 1, 4, 3],
-          fc: [1, 2, 1, 2, 1],
-          fs: [2, 1, 3, 1, 2]
-        }));
+      const genFullSquad = (prefix) => [
+        { name: `${prefix} Goleiro`, pos: "GOL", role: "Titular", fin: [0,0,0,0,0], sot: [0,0,0,0,0], tac: [0,0,0,0,0], fc: [0,0,0,0,0], fs: [0,1,0,0,1] },
+        { name: `${prefix} Lateral Dir.`, pos: "LAT", role: "Titular", fin: [1,1,0,1,1], sot: [0,0,0,1,0], tac: [3,2,3,2,3], fc: [1,2,1,1,1], fs: [1,1,2,1,1] },
+        { name: `${prefix} Zagueiro 1`, pos: "ZAG", role: "Titular", fin: [1,0,1,1,0], sot: [0,0,1,0,0], tac: [2,3,2,2,3], fc: [1,1,2,1,1], fs: [1,0,1,0,1] },
+        { name: `${prefix} Zagueiro 2`, pos: "ZAG", role: "Titular", fin: [1,1,0,0,1], sot: [0,1,0,0,0], tac: [2,2,3,2,2], fc: [2,1,1,2,1], fs: [0,1,0,1,0] },
+        { name: `${prefix} Lateral Esq.`, pos: "LAT", role: "Titular", fin: [1,2,1,1,1], sot: [0,1,0,0,1], tac: [2,3,2,3,2], fc: [1,1,1,2,1], fs: [1,2,1,1,1] },
+        { name: `${prefix} Primeiro Vol.`, pos: "VOL", role: "Titular", fin: [1,0,1,1,0], sot: [0,0,0,0,0], tac: [4,3,4,3,4], fc: [2,3,2,2,2], fs: [1,1,1,2,1] },
+        { name: `${prefix} Segundo Vol.`, pos: "VOL", role: "Titular", fin: [1,2,1,1,1], sot: [0,1,0,1,0], tac: [3,2,3,3,2], fc: [2,1,2,1,2], fs: [2,1,2,1,2] },
+        { name: `${prefix} Meia Armador`, pos: "MEI", role: "Titular", fin: [2,2,1,3,2], sot: [1,1,0,2,1], tac: [1,2,1,1,2], fc: [1,1,0,1,1], fs: [2,3,2,2,3] },
+        { name: `${prefix} Ponta Dir.`, pos: "ATA", role: "Titular", fin: [2,3,2,2,3], sot: [1,2,1,1,1], tac: [1,1,1,0,1], fc: [1,1,1,1,0], fs: [2,2,3,2,2] },
+        { name: `${prefix} Ponta Esq.`, pos: "ATA", role: "Titular", fin: [3,2,2,3,2], sot: [1,1,1,2,1], tac: [1,0,1,1,1], fc: [1,1,0,1,1], fs: [3,2,2,3,2] },
+        { name: `${prefix} Centroavante`, pos: "ATA", role: "Titular", fin: [3,4,2,3,3], sot: [2,2,1,1,2], tac: [0,1,0,0,1], fc: [2,1,2,1,2], fs: [2,1,2,2,1] },
+        { name: `${prefix} Atacante Res.`, pos: "ATA", role: "Reserva", fin: [2,1,2,1,2], sot: [1,0,1,1,0], tac: [1,0,1,0,1], fc: [1,1,0,1,1], fs: [1,1,1,1,1] },
+        { name: `${prefix} Meia Res.`, pos: "MEI", role: "Reserva", fin: [1,2,1,1,1], sot: [0,1,0,0,1], tac: [1,1,2,1,1], fc: [1,1,1,0,1], fs: [1,2,1,1,1] }
+      ];
 
       MATCHES_DATA.push({
         id: `custom-${Date.now()}`,
@@ -1404,20 +1676,20 @@
         home: {
           name: homeName.toUpperCase(),
           abbr: homeName.slice(0, 3).toUpperCase(),
-          bg: "#2563eb",
+          bg: "#059669",
           color: "#ffffff",
           form: ["V", "E", "V", "V", "E"],
           stats: genStats(),
-          players: genPlayers(homeName.slice(0, 3).toUpperCase())
+          players: genFullSquad(homeName.slice(0, 3).toUpperCase())
         },
         away: {
           name: awayName.toUpperCase(),
           abbr: awayName.slice(0, 3).toUpperCase(),
-          bg: "#dc2626",
+          bg: "#0284c7",
           color: "#ffffff",
           form: ["E", "V", "D", "V", "E"],
           stats: genStats(),
-          players: genPlayers(awayName.slice(0, 3).toUpperCase())
+          players: genFullSquad(awayName.slice(0, 3).toUpperCase())
         }
       });
 
