@@ -12,7 +12,7 @@ from google import genai
 from pydantic import BaseModel
 
 # ==============================================================================
-# CONFIGURAÇÕES GERAIS — ARENA DOS DADOS (BIG 5 + UEFA — TODOS OS JOGOS)
+# CONFIGURAÇÕES GERAIS — PH SCORE (BIG 5 + UEFA — JANELA DE 3 DIAS)
 # ==============================================================================
 
 GEMINI_MODEL = "gemini-2.5-flash"
@@ -32,19 +32,15 @@ DIAS_SEMANA_PT = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"]
 DIAS_SEMANA_FULL = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"]
 
 
-# ==============================================================================
-# MODELOS ESTRUTURADOS PARA O GEMINI COMPLETAR DETALHES DE JOGO E ELENCO
-# ==============================================================================
-
 class JogadorScouting(BaseModel):
     name: str
     pos: str   # GOL, ZAG, LAT, VOL, MEI, ATA
     role: str  # Titular ou Reserva
-    fin: List[int]  # 5 jogos (últimos 5 jogos gerais do jogador)
-    sot: List[int]  # 5 jogos
-    tac: List[int]  # 5 jogos
-    fc: List[int]   # 5 jogos
-    fs: List[int]   # 5 jogos
+    fin: List[int]
+    sot: List[int]
+    tac: List[int]
+    fc: List[int]
+    fs: List[int]
 
 
 class DadosComplementaresConfronto(BaseModel):
@@ -63,10 +59,6 @@ class DadosComplementaresConfronto(BaseModel):
     away_players: List[JogadorScouting]
 
 
-# ==============================================================================
-# NORMALIZAÇÃO E CARREGAMENTO DE HISTÓRICO GERAL (TODAS AS COMPETIÇÕES)
-# ==============================================================================
-
 def normalizar(txt: str) -> str:
     nfkd = unicodedata.normalize("NFKD", str(txt))
     sem_acento = "".join([c for c in nfkd if not unicodedata.combining(c)])
@@ -74,14 +66,16 @@ def normalizar(txt: str) -> str:
     for sufixo in (" fc", " cf", " afc", " sc", " ac", " ssc", " bc"):
         if limpo.endswith(sufixo):
             limpo = limpo[: -len(sufixo)].strip()
-    for prefixo in ("fc ", "cf ", "ac ", "as ", "ssc ", "rc ", "rcd ", "cd ", "ud ", "vfb ", "vfl ", "tsg ", "sc ", "sv ", "1 fsv ", "1 fc ", "ogc ", "osc ", "stade "):
+    for prefixo in (
+        "fc ", "cf ", "ac ", "as ", "ssc ", "rc ", "rcd ", "cd ", "ud ",
+        "vfb ", "vfl ", "tsg ", "sc ", "sv ", "1 fsv ", "1 fc ", "ogc ", "osc ", "stade "
+    ):
         if limpo.startswith(prefixo):
             limpo = limpo[len(prefixo):].strip()
     return limpo
 
 
 def carregar_base_unificada_csvs() -> pd.DataFrame:
-    """Carrega todos os CSVs das Big 5 em uma única tabela cronológica para consultar últimos 5 jogos gerais."""
     frames = []
     for comp in COMPETICOES_API:
         url = comp.get("csv")
@@ -106,11 +100,55 @@ def carregar_base_unificada_csvs() -> pd.DataFrame:
     return unificado
 
 
+def buscar_resultados_recentes_api(token: str) -> pd.DataFrame:
+    """Busca resultados recentes (FINISHED) das competições na API para complementar jogos fora do CSV."""
+    headers = {"X-Auth-Token": token}
+    agora_utc = datetime.now(timezone.utc)
+    date_from = (agora_utc - timedelta(days=30)).strftime("%Y-%m-%d")
+    date_to = agora_utc.strftime("%Y-%m-%d")
+
+    linhas = []
+    for comp in COMPETICOES_API:
+        url = f"https://api.football-data.org/v4/competitions/{comp['code']}/matches"
+        try:
+            resp = requests.get(
+                url,
+                headers=headers,
+                params={"dateFrom": date_from, "dateTo": date_to, "status": "FINISHED"},
+                timeout=20,
+            )
+            if resp.status_code != 200:
+                time.sleep(1.5)
+                continue
+
+            for m in resp.json().get("matches", []):
+                ft = (m.get("score") or {}).get("fullTime") or {}
+                hg = ft.get("home")
+                ag = ft.get("away")
+                if hg is None or ag is None:
+                    continue
+                h_name = (m.get("homeTeam") or {}).get("shortName") or (m.get("homeTeam") or {}).get("name")
+                a_name = (m.get("awayTeam") or {}).get("shortName") or (m.get("awayTeam") or {}).get("name")
+                if not h_name or not a_name:
+                    continue
+                dt_val = pd.to_datetime(m.get("utcDate"), errors="coerce")
+                linhas.append({
+                    "HomeTeam": h_name,
+                    "AwayTeam": a_name,
+                    "FTHG": int(hg),
+                    "FTAG": int(ag),
+                    "_dt": dt_val,
+                })
+            time.sleep(1.0)
+        except Exception as e:
+            print(f"   [Aviso] Falha ao buscar resultados recentes de {comp['leagueKey']}: {e}")
+
+    if not linhas:
+        return pd.DataFrame()
+    return pd.DataFrame(linhas)
+
+
 def extrair_18_metricas_gerais(df_unificado: pd.DataFrame, nome_time: str) -> tuple[List[List[int]], List[str]]:
-    """
-    Busca os ÚLTIMOS 5 JOGOS GERAIS da equipe (independente de ser casa/fora ou da competição)
-    e monta as 18 métricas + sequência de resultados ['V','E','D',...].
-    """
     fallback_stats = [
         [2, 1, 2, 1, 2], [1, 1, 1, 2, 1], [15, 13, 16, 12, 14], [7, 6, 8, 5, 7],
         [11, 12, 10, 13, 11], [6, 5, 7, 4, 6], [4, 5, 3, 6, 4], [6, 5, 7, 5, 6],
@@ -130,7 +168,7 @@ def extrair_18_metricas_gerais(df_unificado: pd.DataFrame, nome_time: str) -> tu
     mask = df_unificado["HomeTeam"].apply(lambda x: alvo in normalizar(x) or normalizar(x) in alvo) | \
            df_unificado["AwayTeam"].apply(lambda x: alvo in normalizar(x) or normalizar(x) in alvo)
 
-    jogos = df_unificado[mask].tail(5)
+    jogos = df_unificado[mask].sort_values(by="_dt", ascending=True, na_position="first").tail(5)
     if len(jogos) < 5:
         return fallback_stats, fallback_form
 
@@ -176,10 +214,6 @@ def extrair_18_metricas_gerais(df_unificado: pd.DataFrame, nome_time: str) -> tu
     return metricas, forma
 
 
-# ==============================================================================
-# COLETA DE TODOS OS JOGOS DA SEMANA VIA FOOTBALL-DATA.ORG
-# ==============================================================================
-
 def buscar_jogos_api(token: str) -> List[dict]:
     headers = {"X-Auth-Token": token}
     agora_utc = datetime.now(timezone.utc)
@@ -202,8 +236,7 @@ def buscar_jogos_api(token: str) -> List[dict]:
                 continue
 
             matches = resp.json().get("matches", [])
-            print(f"[OK] {comp['leagueKey']}: {len(matches)} jogo(s) encontrados nos próximos 7 dias.")
-            # Sem limite artificial: traz TODOS os jogos da semana de cada competição
+            print(f"[OK] {comp['leagueKey']}: {len(matches)} jogo(s) encontrados na janela de 3 dias.")
             for m in matches:
                 m["_leagueKey"] = comp["leagueKey"]
                 jogos_coletados.append(m)
@@ -212,36 +245,8 @@ def buscar_jogos_api(token: str) -> List[dict]:
         except Exception as e:
             print(f"[Erro] Falha ao consultar {comp['leagueKey']}: {e}")
 
-    # Ordena cronologicamente todos os jogos coletados
     jogos_coletados.sort(key=lambda x: x.get("utcDate", ""))
     return jogos_coletados
-
-
-# ==============================================================================
-# ENRIQUECIMENTO DE ELENCOS (15 JOGADORES) E DETALHES VIA GEMINI 2.5 FLASH
-# ==============================================================================
-
-def gerar_elenco_fallback(nome_time: str) -> List[dict]:
-    sigla = nome_time[:3].upper()
-    modelo = [
-        (f"{sigla} Goleiro Titular", "GOL", "Titular", [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [1,0,0,1,0]),
-        (f"{sigla} Lateral Direito", "LAT", "Titular", [1,1,1,0,1], [0,0,1,0,0], [3,2,3,3,2], [1,2,1,1,1], [1,1,2,1,1]),
-        (f"{sigla} Zagueiro Central 1", "ZAG", "Titular", [1,0,1,1,0], [0,1,0,0,0], [2,3,2,3,2], [1,1,2,1,1], [1,0,1,0,1]),
-        (f"{sigla} Zagueiro Central 2", "ZAG", "Titular", [1,1,0,0,1], [0,0,1,0,0], [2,2,3,2,2], [2,1,1,2,1], [0,1,0,1,0]),
-        (f"{sigla} Lateral Esquerdo", "LAT", "Titular", [1,2,1,1,1], [0,1,0,0,1], [2,3,2,3,2], [1,1,1,2,1], [1,2,1,1,1]),
-        (f"{sigla} Primeiro Volante", "VOL", "Titular", [1,0,1,1,0], [0,0,0,0,0], [4,3,4,3,4], [2,3,2,2,2], [1,1,1,2,1]),
-        (f"{sigla} Segundo Volante", "VOL", "Titular", [1,2,1,1,1], [0,1,0,1,0], [3,2,3,3,2], [2,1,2,1,2], [2,1,2,1,2]),
-        (f"{sigla} Meia Armador", "MEI", "Titular", [2,2,1,3,2], [1,1,0,2,1], [1,2,1,1,2], [1,1,0,1,1], [2,3,2,2,3]),
-        (f"{sigla} Ponta Direita", "ATA", "Titular", [2,3,2,2,3], [1,2,1,1,1], [1,1,1,0,1], [1,1,1,1,0], [2,2,3,2,2]),
-        (f"{sigla} Ponta Esquerda", "ATA", "Titular", [3,2,2,3,2], [1,1,1,2,1], [1,0,1,1,1], [1,1,0,1,1], [3,2,2,3,2]),
-        (f"{sigla} Centroavante", "ATA", "Titular", [3,4,2,3,3], [2,2,1,1,2], [0,1,0,0,1], [2,1,2,1,2], [2,1,2,2,1]),
-        (f"{sigla} Atacante Reserva", "ATA", "Reserva", [2,1,2,1,2], [1,0,1,1,0], [1,0,1,0,1], [1,1,0,1,1], [1,1,1,1,1]),
-        (f"{sigla} Meia Reserva", "MEI", "Reserva", [1,2,1,1,1], [0,1,0,0,1], [2,1,2,1,2], [1,1,1,0,1], [1,1,2,1,1]),
-    ]
-    return [
-        {"name": n, "pos": p, "role": r, "fin": fin, "sot": sot, "tac": tac, "fc": fc, "fs": fs}
-        for n, p, r, fin, sot, tac, fc, fs in modelo
-    ]
 
 
 def enriquecer_confronto_gemini(
@@ -249,28 +254,29 @@ def enriquecer_confronto_gemini(
     home_name: str,
     away_name: str,
     league_key: str,
+    round_date: str,
     arbitro_api: Optional[str],
 ) -> Optional[DadosComplementaresConfronto]:
     prompt = f"""
     Você é um analista de dados e scouting de futebol europeu (temporada 2026/27).
-    Gere os dados estruturados de pré-jogo e scouting completo dos elencos para:
+    Preencha os dados de pré-jogo, arbitragem escalada e elenco real com nomes próprios de jogadores para:
     - Mandante: {home_name}
     - Visitante: {away_name}
-    - Competição deste jogo: {league_key}
-    - Árbitro informado na API (se houver): {arbitro_api or "Definir árbitro principal da competição"}
+    - Competição e Rodada: {league_key}
+    - Data/Hora: {round_date}
+    - Árbitro informado na API (se houver): {arbitro_api or "Não retornado pela API — identifique o árbitro designado para esta partida/rodada se já escalado"}
 
     REGRAS OBRIGATÓRIAS:
-    1. ELENCOS COMPLETOS E REAIS (`home_players` e `away_players`):
-       - Liste EXATAMENTE 14 jogadores reais atuais (2026/27) do {home_name} em `home_players` e 14 jogadores reais atuais do {away_name} em `away_players`.
-       - Inclua os **11 Titulares** (1 GOL, 2 ZAG, 2 LAT, 2 VOL, 1 MEI, 3 ATA) + **3 Reservas** principais (ex: MEI, ATA, VOL/ZAG).
-       - NUNCA deixe as listas de jogadores vazias!
-    2. MÉTRICAS DOS ÚLTIMOS 5 JOGOS GERAIS DO JOGADOR (independente da competição — liga nacional + copas):
-       - Para cada jogador, `fin` (Finalizações), `sot` (Chutes ao Gol), `tac` (Desarmes), `fc` (Faltas Cometidas) e `fs` (Faltas Sofridas) devem ser listas com EXATAMENTE 5 números inteiros realistas referentes aos últimos 5 jogos gerais disputados pelo atleta.
-       - Goleiros (GOL) devem ter 0 em fin/sot/tac/fc e 0 ou 1 em fs. Atacantes titulares devem ter médias entre 2.0 e 4.5 em `fin`. Volantes e laterais devem ter médias entre 2.0 e 4.2 em `tac`.
-    3. ESTÁDIO, ARBITRAGEM E CORES:
-       - `stadium` e `city`: Estádio oficial do {home_name} e cidade/país em português.
-       - `referee_name`, `referee_matches`, `referee_yellow`, `referee_red`, `referee_pen`: Dados realistas do árbitro da temporada 26/27.
-       - `home_bg`, `home_color`, `away_bg`, `away_color`: Cores CSS hex ou linear-gradient fiéis aos uniformes principais dos clubes, garantindo legibilidade total do texto.
+    1. NOMES REAIS DOS JOGADORES (`home_players` e `away_players`):
+       - Use EXCLUSIVAMENTE nomes reais de jogadores do elenco atual (2026/27) de {home_name} e de {away_name}.
+       - PROIBIDO usar rótulos genéricos como "Goleiro Titular", "Centroavante", "Lateral Direito", "Zagueiro Central", "Ponta" ou siglas de time como prefixo.
+       - Liste 14 jogadores reais de {home_name} (11 Titulares + 3 Reservas) e 14 jogadores reais de {away_name} (11 Titulares + 3 Reservas).
+    2. MÉTRICAS DOS ÚLTIMOS 5 JOGOS GERAIS DO JOGADOR (todas as competições):
+       - Cada array (`fin`, `sot`, `tac`, `fc`, `fs`) deve conter 5 números inteiros representando os últimos 5 jogos gerais disputados pelo jogador.
+    3. ARBITRAGEM E ESTÁDIO:
+       - Se houver árbitro designado (ex.: Daniel Siebert na Champions League)[cite: 8], informe o nome dele em `referee_name` e as médias reais/estimadas da temporada em `referee_yellow`, `referee_red` e `referee_pen`.
+       - `stadium` e `city`: Nome oficial do estádio e cidade/país em português.
+       - `home_bg`, `home_color`, `away_bg`, `away_color`: Cores hex oficiais dos uniformes com alto contraste para texto.
     """
     for tentativa in range(2):
         try:
@@ -293,10 +299,6 @@ def enriquecer_confronto_gemini(
     return None
 
 
-# ==============================================================================
-# MONTAGEM FINAL DO HTML
-# ==============================================================================
-
 def main():
     fd_token = os.environ.get("FOOTBALL_DATA_KEY")
     gemini_key = os.environ.get("GEMINI_API_KEY")
@@ -307,16 +309,21 @@ def main():
     client = genai.Client(http_options={"api_version": "v1beta"}) if gemini_key else None
 
     print("1. Carregando base histórica unificada das Big 5...")
-    df_unificado = carregar_base_unificada_csvs()
-    print(f"   -> {len(df_unificado)} partidas históricas carregadas.")
+    df_csv = carregar_base_unificada_csvs()
+    print("   -> Buscando resultados recentes (todas as competições) na API...")
+    df_api_res = buscar_resultados_recentes_api(fd_token)
 
-    print("\n2. Buscando TODOS os jogos dos próximos 7 dias nas 8 competições...")
+    frames_hist = [d for d in (df_csv, df_api_res) if d is not None and not d.empty]
+    df_unificado = pd.concat(frames_hist, ignore_index=True) if frames_hist else pd.DataFrame()
+    print(f"   -> {len(df_unificado)} partidas históricas consolidadas.")
+
+    print("\n2. Buscando jogos da janela de 3 dias nas 8 competições...")
     jogos_api = buscar_jogos_api(fd_token)
     if not jogos_api:
-        print("Nenhum jogo encontrado na API para os próximos 7 dias. Mantendo index.html atual.")
+        print("Nenhum jogo encontrado na API para o período. Mantendo index.html atual.")
         return
 
-    print(f"\nTotal de confrontos encontrados na semana: {len(jogos_api)}\n")
+    print(f"\nTotal de confrontos encontrados: {len(jogos_api)}\n")
     matches_data_final = []
 
     for idx, m in enumerate(jogos_api, start=1):
@@ -331,12 +338,12 @@ def main():
         dia_curto = DIAS_SEMANA_PT[brt_dt.weekday()]
         dia_longo = DIAS_SEMANA_FULL[brt_dt.weekday()]
 
+        match_date_str = brt_dt.strftime("%d/%m/%Y")
         sub_label = f"{dia_curto} {brt_dt.strftime('%d/%m')} • {brt_dt.strftime('%H:%M')}"
-        round_date = f"{dia_longo}, {brt_dt.strftime('%d/%m/%Y')} • {brt_dt.strftime('%H:%M')} (BRT)"
+        round_date = f"{dia_longo}, {match_date_str} • {brt_dt.strftime('%H:%M')} (BRT)"
         matchday = m.get("matchday")
         league_title = f"{league_key.upper()} • RODADA {matchday}" if matchday else f"{league_key.upper()} • FASE DE LIGA"
 
-        # Últimos 5 jogos gerais (independente da competição)
         home_stats, home_form = extrair_18_metricas_gerais(df_unificado, home_name)
         away_stats, away_form = extrair_18_metricas_gerais(df_unificado, away_name)
 
@@ -346,7 +353,9 @@ def main():
         print(f"[{idx}/{len(jogos_api)}] Processando: {home_name} x {away_name} ({league_key})...")
         comp_ia = None
         if client:
-            comp_ia = enriquecer_confronto_gemini(client, home_name, away_name, league_key, arbitro_api)
+            comp_ia = enriquecer_confronto_gemini(
+                client, home_name, away_name, league_title, round_date, arbitro_api
+            )
 
         if comp_ia:
             stadium = comp_ia.stadium.upper()
@@ -368,19 +377,20 @@ def main():
             ref_obj = {
                 "name": (arbitro_api or "ÁRBITRO A DEFINIR").upper(),
                 "matches": "Temporada 26/27",
-                "yellow": "Média: 4.35",
-                "red": "Média: 0.20",
-                "pen": "Média: 0.28",
+                "yellow": "Média: 4.27",
+                "red": "Média: 0.17",
+                "pen": "Média: 0.25",
             }
             home_bg, home_color = "#059669", "#ffffff"
             away_bg, away_color = "#1d4ed8", "#ffffff"
-            home_players = gerar_elenco_fallback(home_name)
-            away_players = gerar_elenco_fallback(away_name)
+            home_players = []
+            away_players = []
 
         matches_data_final.append(
             {
                 "id": f"match-{m.get('id')}",
                 "leagueKey": league_key,
+                "matchDate": match_date_str,
                 "tabLabel": f"{home_name} x {away_name}",
                 "subLabel": sub_label,
                 "league": league_title,
@@ -411,18 +421,18 @@ def main():
 
     agora_brt = datetime.now(timezone.utc) - timedelta(hours=3)
     fim_brt = agora_brt + timedelta(days=2)
-    periodo_str = f"Big 5 + UEFA • Janela {agora_brt.strftime('%d/%m')} a {fim_brt.strftime('%d/%m')}"
+    periodo_str = f"PH Score • Big 5 + UEFA ({agora_brt.strftime('%d/%m')} a {fim_brt.strftime('%d/%m')})"
 
     with open("template.html", "r", encoding="utf-8") as f:
         html_tpl = f.read()
 
-    html_out = html_tpl.replace("Big 5 + UEFA • Semana 23/11 a 29/11", periodo_str)
+    html_out = html_tpl.replace("PH Score • Big 5 + UEFA", periodo_str)
     html_out = html_out.replace("/* __INJECT_MATCHES_DATA__ */", json.dumps(matches_data_final, ensure_ascii=False, indent=2))
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html_out)
 
-    print(f"\n[Concluído] index.html gerado com {len(matches_data_final)} confronto(s) e elencos completos!")
+    print(f"\n[Concluído] index.html gerado com {len(matches_data_final)} confronto(s)!")
 
 
 if __name__ == "__main__":
