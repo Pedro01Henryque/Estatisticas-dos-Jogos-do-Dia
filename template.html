@@ -49,7 +49,6 @@
       font-variant-numeric: tabular-nums;
     }
 
-    /* TOP BAR */
     .topbar {
       position: sticky;
       top: 0;
@@ -159,7 +158,6 @@
       filter: brightness(1.08);
     }
 
-    /* FILTROS */
     .filters-bar {
       max-width: 1440px;
       margin: 16px auto 0;
@@ -169,8 +167,19 @@
       gap: 10px;
     }
 
+    .filter-group-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-right: 4px;
+      align-self: center;
+    }
+
     .pills-row {
       display: flex;
+      align-items: center;
       gap: 8px;
       overflow-x: auto;
       padding-bottom: 4px;
@@ -199,6 +208,12 @@
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.22), rgba(56, 189, 248, 0.18));
       border-color: var(--accent-emerald);
       color: #ffffff;
+    }
+
+    .pill.date-pill.active {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.24), rgba(16, 185, 129, 0.16));
+      border-color: var(--accent-cyan);
+      color: #e0f2fe;
     }
 
     .match-tabs {
@@ -250,7 +265,6 @@
       color: var(--text-primary);
     }
 
-    /* CONTAINER PRINCIPAL */
     .dashboard {
       max-width: 1440px;
       margin: 18px auto 0;
@@ -268,7 +282,6 @@
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.24);
     }
 
-    /* CABEÇALHO DO CONFRONTO */
     .match-header {
       display: grid;
       grid-template-columns: 1.35fr 0.95fr 1fr;
@@ -392,7 +405,6 @@
       color: var(--text-secondary);
     }
 
-    /* MÉTRICAS DAS EQUIPES */
     .section-head {
       padding: 14px 20px;
       border-bottom: 1px solid var(--border-subtle);
@@ -469,7 +481,6 @@
       color: #34d399;
     }
 
-    /* MATRIZ DE JOGADORES */
     .matrix-toolbar {
       display: flex;
       flex-wrap: wrap;
@@ -551,7 +562,6 @@
       font-weight: 800;
     }
 
-    /* TOP 5 INSIGHTS NO FINAL DO PAINEL */
     .insights-card {
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.09), rgba(15, 23, 42, 0.96) 50%, rgba(56, 189, 248, 0.09));
       border: 1px solid rgba(16, 185, 129, 0.28);
@@ -664,7 +674,7 @@
             PH Score
             <span class="brand-tag">Scouting &amp; Stats</span>
           </div>
-          <div class="brand-sub" id="periodoHeader">Big 5 + UEFA • Semana 23/11 a 29/11</div>
+          <div class="brand-sub" id="periodoHeader">PH Score • Big 5 + UEFA</div>
         </div>
       </div>
 
@@ -677,6 +687,7 @@
 
   <div class="filters-bar">
     <div class="pills-row" id="leaguePills"></div>
+    <div class="pills-row" id="datePills"></div>
     <div class="match-tabs" id="matchTabs"></div>
   </div>
 
@@ -725,6 +736,7 @@
     ];
 
     let selectedLeague = "Todas";
+    let selectedDate = "Todas";
     let selectedMatchId = MATCHES_DATA[0]?.id || null;
     let onlyAdvantages = false;
     let playerSearch = "";
@@ -743,14 +755,23 @@
       setTimeout(() => el.classList.remove("show"), 2400);
     };
 
+    function extractMatchDate(m) {
+      if (m.matchDate) return m.matchDate;
+      const match = (m.roundDate || "").match(/(\d{2}\/\d{2}\/\d{4})/);
+      return match ? match[1] : "Data a definir";
+    }
+
     function getFilteredMatches() {
-      if (selectedLeague === "Todas") return MATCHES_DATA;
-      return MATCHES_DATA.filter((m) => m.leagueKey === selectedLeague);
+      return MATCHES_DATA.filter((m) => {
+        const okLeague = selectedLeague === "Todas" || m.leagueKey === selectedLeague;
+        const okDate = selectedDate === "Todas" || extractMatchDate(m) === selectedDate;
+        return okLeague && okDate;
+      });
     }
 
     function renderLeaguePills() {
       const container = document.getElementById("leaguePills");
-      container.innerHTML = LEAGUES.map((lg) => {
+      const pills = LEAGUES.map((lg) => {
         const count = lg === "Todas"
           ? MATCHES_DATA.length
           : MATCHES_DATA.filter((m) => m.leagueKey === lg).length;
@@ -760,6 +781,8 @@
           </button>
         `;
       }).join("");
+
+      container.innerHTML = `<span class="filter-group-label">Liga:</span>${pills}`;
 
       container.querySelectorAll(".pill").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -773,11 +796,47 @@
       });
     }
 
+    function renderDatePills() {
+      const container = document.getElementById("datePills");
+      const datesSet = new Set();
+      MATCHES_DATA.forEach((m) => {
+        const d = extractMatchDate(m);
+        if (d) datesSet.add(d);
+      });
+
+      const dates = ["Todas", ...Array.from(datesSet)];
+      const pills = dates.map((dt) => {
+        const count = dt === "Todas"
+          ? MATCHES_DATA.length
+          : MATCHES_DATA.filter((m) => extractMatchDate(m) === dt).length;
+        return `
+          <button class="pill date-pill ${selectedDate === dt ? "active" : ""}" data-date="${dt}" type="button">
+            ${dt === "Todas" ? `Todas as Datas (${count})` : `📅 ${dt} (${count})`}
+          </button>
+        `;
+      }).join("");
+
+      container.innerHTML = `<span class="filter-group-label">Data:</span>${pills}`;
+
+      container.querySelectorAll(".date-pill").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          selectedDate = btn.dataset.date;
+          const list = getFilteredMatches();
+          if (!list.some((m) => m.id === selectedMatchId)) {
+            selectedMatchId = list[0]?.id || null;
+          }
+          renderMatchTabs();
+          renderDashboard();
+          renderDatePills();
+        });
+      });
+    }
+
     function renderMatchTabs() {
       const container = document.getElementById("matchTabs");
       const list = getFilteredMatches();
       if (!list.length) {
-        container.innerHTML = `<div class="section-sub">Nenhum confronto encontrado para esta competição no período.</div>`;
+        container.innerHTML = `<div class="section-sub">Nenhum confronto encontrado para este filtro de liga/data.</div>`;
         return;
       }
 
@@ -904,7 +963,7 @@
       const m = MATCHES_DATA.find((item) => item.id === selectedMatchId) || getFilteredMatches()[0];
 
       if (!m) {
-        dash.innerHTML = `<div class="card" style="padding:24px;">Nenhum jogo disponível para exibir.</div>`;
+        dash.innerHTML = `<div class="card" style="padding:24px;">Nenhum jogo disponível para exibir neste filtro.</div>`;
         return;
       }
 
@@ -959,7 +1018,7 @@
           <div class="section-head">
             <div>
               <div class="section-title">Comparativo das 18 Métricas • Últimos 5 Jogos</div>
-              <div class="section-sub">Sequência cronológica em 90' e média por partida</div>
+              <div class="section-sub">Sequência cronológica em 90' e média por partida (todas as competições)</div>
             </div>
           </div>
 
@@ -1104,6 +1163,7 @@
       const txt = [
         `📊 PH SCORE — ${m.home.name} x ${m.away.name}`,
         `🏆 ${m.league} | ${m.roundDate}`,
+        `🧑‍⚖️ Árbitro: ${m.referee?.name || "A definir"}`,
         `⚽ Gols (últ. 5): ${m.home.name} ${hGols} x ${aGols} ${m.away.name}`,
         `🎯 Finalizações (últ. 5): ${m.home.name} ${hFin} x ${aFin} ${m.away.name}`
       ].join("\n");
@@ -1114,6 +1174,7 @@
 
     function renderAll() {
       renderLeaguePills();
+      renderDatePills();
       renderMatchTabs();
       renderDashboard();
       buildTop5Insights();
