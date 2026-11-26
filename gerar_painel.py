@@ -16,6 +16,7 @@ from pydantic import BaseModel
 # ==============================================================================
 
 GEMINI_MODEL = "gemini-2.5-flash"
+PAUSA_API_SEGUNDOS = 6.5
 
 COMPETICOES_API = [
     {"code": "PL", "leagueKey": "Premier League", "csv": "https://www.football-data.co.uk/mmz4281/2627/E0.csv"},
@@ -75,6 +76,15 @@ def normalizar(txt: str) -> str:
     return limpo
 
 
+def normalizar_coluna_data(df: pd.DataFrame, col: str = "_dt") -> pd.DataFrame:
+    """Padroniza a coluna de data como tz-naive (UTC sem fuso) para evitar TypeError na ordenação."""
+    if df is None or df.empty or col not in df.columns:
+        return df
+    dt_series = pd.to_datetime(df[col], errors="coerce", utc=True)
+    df[col] = dt_series.dt.tz_convert(None)
+    return df
+
+
 def carregar_base_unificada_csvs() -> pd.DataFrame:
     frames = []
     for comp in COMPETICOES_API:
@@ -85,7 +95,7 @@ def carregar_base_unificada_csvs() -> pd.DataFrame:
             df = pd.read_csv(url)
             df = df.dropna(subset=["HomeTeam", "AwayTeam", "FTHG", "FTAG"]).copy()
             if "Date" in df.columns:
-                df["_dt"] = pd.to_datetime(df["Date"], dayfirst=True, errors="coerce")
+                df["_dt"] = pd.to_datetime(df["Date"], dayfirst=True, errors="coerce", utc=True).dt.tz_convert(None)
             else:
                 df["_dt"] = pd.NaT
             frames.append(df)
@@ -96,12 +106,13 @@ def carregar_base_unificada_csvs() -> pd.DataFrame:
         return pd.DataFrame()
 
     unificado = pd.concat(frames, ignore_index=True)
+    unificado = normalizar_coluna_data(unificado, "_dt")
     unificado = unificado.sort_values(by="_dt", ascending=True, na_position="first").reset_index(drop=True)
     return unificado
 
 
 def buscar_resultados_recentes_api(token: str) -> pd.DataFrame:
-    """Busca resultados recentes (FINISHED) das competições na API para complementar jogos fora do CSV."""
+    """Busca resultados recentes (FINISHED) das competições na API respeitando rate limit."""
     headers = {"X-Auth-Token": token}
     agora_utc = datetime.now(timezone.utc)
     date_from = (agora_utc - timedelta(days=30)).strftime("%Y-%m-%d")
@@ -117,8 +128,12 @@ def buscar_resultados_recentes_api(token: str) -> pd.DataFrame:
                 params={"dateFrom": date_from, "dateTo": date_to, "status": "FINISHED"},
                 timeout=20,
             )
+            if resp.status_code == 429:
+                print(f"   [Aviso] Rate limit (429) em {comp['leagueKey']} (resultados). Aguardando 15s...")
+                time.sleep(15)
+                continue
             if resp.status_code != 200:
-                time.sleep(1.5)
+                time.sleep(PAUSA_API_SEGUNDOS)
                 continue
 
             for m in resp.json().get("matches", []):
@@ -131,21 +146,25 @@ def buscar_resultados_recentes_api(token: str) -> pd.DataFrame:
                 a_name = (m.get("awayTeam") or {}).get("shortName") or (m.get("awayTeam") or {}).get("name")
                 if not h_name or not a_name:
                     continue
-                dt_val = pd.to_datetime(m.get("utcDate"), errors="coerce")
+                dt_val = pd.to_datetime(m.get("utcDate"), errors="coerce", utc=True)
+                dt_naive = dt_val.tz_convert(None) if pd.notna(dt_val) else pd.NaT
                 linhas.append({
                     "HomeTeam": h_name,
                     "AwayTeam": a_name,
                     "FTHG": int(hg),
                     "FTAG": int(ag),
-                    "_dt": dt_val,
+                    "_dt": dt_naive,
                 })
-            time.sleep(1.0)
+            time.sleep(PAUSA_API_SEGUNDOS)
         except Exception as e:
             print(f"   [Aviso] Falha ao buscar resultados recentes de {comp['leagueKey']}: {e}")
+            time.sleep(PAUSA_API_SEGUNDOS)
 
     if not linhas:
         return pd.DataFrame()
-    return pd.DataFrame(linhas)
+
+    df_res = pd.DataFrame(linhas)
+    return normalizar_coluna_data(df_res, "_dt")
 
 
 def extrair_18_metricas_gerais(df_unificado: pd.DataFrame, nome_time: str) -> tuple[List[List[int]], List[str]]:
@@ -161,6 +180,7 @@ def extrair_18_metricas_gerais(df_unificado: pd.DataFrame, nome_time: str) -> tu
     if df_unificado is None or df_unificado.empty:
         return fallback_stats, fallback_form
 
+    df_unificado = normalizar_coluna_data(df_unificado, "_dt")
     alvo = normalizar(nome_time)
     if not alvo:
         return fallback_stats, fallback_form
@@ -230,9 +250,13 @@ def buscar_jogos_api(token: str) -> List[dict]:
                 params={"dateFrom": date_from, "dateTo": date_to, "status": "SCHEDULED,TIMED"},
                 timeout=25,
             )
+            if resp.status_code == 429:
+                print(f"[Aviso] {comp['leagueKey']} atingiu limite 429. Aguardando 15s...")
+                time.sleep(15)
+                continue
             if resp.status_code != 200:
                 print(f"[Aviso] {comp['leagueKey']} retornou status {resp.status_code}: {resp.text[:120]}")
-                time.sleep(2)
+                time.sleep(PAUSA_API_SEGUNDOS)
                 continue
 
             matches = resp.json().get("matches", [])
@@ -241,9 +265,10 @@ def buscar_jogos_api(token: str) -> List[dict]:
                 m["_leagueKey"] = comp["leagueKey"]
                 jogos_coletados.append(m)
 
-            time.sleep(1.2)
+            time.sleep(PAUSA_API_SEGUNDOS)
         except Exception as e:
             print(f"[Erro] Falha ao consultar {comp['leagueKey']}: {e}")
+            time.sleep(PAUSA_API_SEGUNDOS)
 
     jogos_coletados.sort(key=lambda x: x.get("utcDate", ""))
     return jogos_coletados
@@ -274,7 +299,7 @@ def enriquecer_confronto_gemini(
     2. MÉTRICAS DOS ÚLTIMOS 5 JOGOS GERAIS DO JOGADOR (todas as competições):
        - Cada array (`fin`, `sot`, `tac`, `fc`, `fs`) deve conter 5 números inteiros representando os últimos 5 jogos gerais disputados pelo jogador.
     3. ARBITRAGEM E ESTÁDIO:
-       - Se houver árbitro designado (ex.: Daniel Siebert na Champions League)[cite: 8], informe o nome dele em `referee_name` e as médias reais/estimadas da temporada em `referee_yellow`, `referee_red` e `referee_pen`.
+       - Se houver árbitro designado, informe o nome dele em `referee_name` e as médias reais/estimadas da temporada em `referee_yellow`, `referee_red` e `referee_pen`.
        - `stadium` e `city`: Nome oficial do estádio e cidade/país em português.
        - `home_bg`, `home_color`, `away_bg`, `away_color`: Cores hex oficiais dos uniformes com alto contraste para texto.
     """
@@ -314,7 +339,11 @@ def main():
     df_api_res = buscar_resultados_recentes_api(fd_token)
 
     frames_hist = [d for d in (df_csv, df_api_res) if d is not None and not d.empty]
-    df_unificado = pd.concat(frames_hist, ignore_index=True) if frames_hist else pd.DataFrame()
+    if frames_hist:
+        df_unificado = pd.concat(frames_hist, ignore_index=True)
+        df_unificado = normalizar_coluna_data(df_unificado, "_dt")
+    else:
+        df_unificado = pd.DataFrame()
     print(f"   -> {len(df_unificado)} partidas históricas consolidadas.")
 
     print("\n2. Buscando jogos da janela de 3 dias nas 8 competições...")
