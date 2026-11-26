@@ -85,6 +85,17 @@ def normalizar_coluna_data(df: pd.DataFrame, col: str = "_dt") -> pd.DataFrame:
     return df
 
 
+def valor_seguro_int(registro, chave: str, padrao: int) -> int:
+    """Converte com segurança valores do pandas para int, evitando ValueError com float NaN."""
+    val = registro.get(chave, padrao)
+    if val is None or pd.isna(val):
+        return padrao
+    try:
+        return int(float(val))
+    except (ValueError, TypeError):
+        return padrao
+
+
 def carregar_base_unificada_csvs() -> pd.DataFrame:
     frames = []
     for comp in COMPETICOES_API:
@@ -199,18 +210,18 @@ def extrair_18_metricas_gerais(df_unificado: pd.DataFrame, nome_time: str) -> tu
         h_norm = normalizar(r["HomeTeam"])
         mandante = (alvo in h_norm) or (h_norm in alvo)
 
-        gm = int(r["FTHG"] if mandante else r["FTAG"])
-        gs = int(r["FTAG"] if mandante else r["FTHG"])
+        gm = valor_seguro_int(r, "FTHG" if mandante else "FTAG", 1)
+        gs = valor_seguro_int(r, "FTAG" if mandante else "FTHG", 1)
         forma.append("V" if gm > gs else ("E" if gm == gs else "D"))
 
-        fin = int(r.get("HS" if mandante else "AS", 13) or 13)
-        fin_sof = int(r.get("AS" if mandante else "HS", 11) or 11)
-        sot = int(r.get("HST" if mandante else "AST", 5) or 5)
-        sot_sof = int(r.get("AST" if mandante else "HST", 4) or 4)
-        esc = int(r.get("HC" if mandante else "AC", 6) or 6)
-        esc_sof = int(r.get("AC" if mandante else "HC", 5) or 5)
-        faltas = int(r.get("HF" if mandante else "AF", 12) or 12)
-        ama = int(r.get("HY" if mandante else "AY", 2) or 2)
+        fin = valor_seguro_int(r, "HS" if mandante else "AS", 13)
+        fin_sof = valor_seguro_int(r, "AS" if mandante else "HS", 11)
+        sot = valor_seguro_int(r, "HST" if mandante else "AST", 5)
+        sot_sof = valor_seguro_int(r, "AST" if mandante else "HST", 4)
+        esc = valor_seguro_int(r, "HC" if mandante else "AC", 6)
+        esc_sof = valor_seguro_int(r, "AC" if mandante else "HC", 5)
+        faltas = valor_seguro_int(r, "HF" if mandante else "AF", 12)
+        ama = valor_seguro_int(r, "HY" if mandante else "AY", 2)
 
         metricas[0].append(gm)
         metricas[1].append(gs)
